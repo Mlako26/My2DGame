@@ -56,39 +56,26 @@ public class Player extends Entity{
     }
 
     public void update() {
+        if (keyH.anyKeyIsPressed()) {
+            resetCollisions();
 
-        if (anyKeyIsPressed()) {
-            if (keyH.upPressed) {
+            gamePanel.updateCollisionsFor(this);
+
+            if (keyH.upPressed && !topCollisionOn) {
+                worldY -= speed;
                 direction = "up";
             }
-            if (keyH.downPressed) {
+            if (keyH.downPressed && !bottomCollisionOn) {
+                worldY += speed;
                 direction = "down";
             }
-            if (keyH.leftPressed) {
+            if (keyH.leftPressed && !leftCollisionOn) {
+                worldX -= speed;
                 direction = "left";
             }
-            if (keyH.rightPressed) {
+            if (keyH.rightPressed && !rightCollisionOn) {
+                worldX += speed;
                 direction = "right";
-            }
-
-            collisionOn = false;
-            gamePanel.collisionDetector.checkTile(this);
-
-            if (!collisionOn) {
-                switch (direction) {
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
-                }
             }
 
             spriteCounter++;
@@ -107,8 +94,11 @@ public class Player extends Entity{
 
     }
 
-    private boolean anyKeyIsPressed() {
-        return keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
+    private void resetCollisions() {
+        topCollisionOn = false;
+        bottomCollisionOn = false;
+        rightCollisionOn = false;
+        leftCollisionOn = false;
     }
 
     public void draw(Graphics2D g2) {

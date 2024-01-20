@@ -1,5 +1,6 @@
 package main;
 
+import entity.Entity;
 import entity.Player;
 import tile.TileManager;
 
@@ -108,5 +109,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int getScreenX(int worldX) {
         return worldX - player.worldX + player.screenX;
+    }
+
+    public void updateCollisionsFor(Entity entity) {
+        collisionDetector.updateCollisionsFor(entity);
+    }
+
+    public boolean isCollideable(int tileType) {
+        return tileManager.isCollideable(tileType);
     }
 }

@@ -3,7 +3,6 @@ package tile;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
-import javax.naming.directory.InvalidAttributesException;
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
@@ -67,7 +66,7 @@ public class TileManager {
             if (!file.contains("/maps")) file = "/maps/" + file;
             if (!file.contains(".txt")) file = file + ".txt";
             InputStream is = getClass().getResourceAsStream(file);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
 
             for (int row = 0; row < gp.maxWorldRow; row++) {
                 String[] parts = br.readLine().split(" ");
@@ -122,5 +121,9 @@ public class TileManager {
             }
         }
         return -1;
+    }
+
+    public boolean isCollideable(int tileId) {
+        return tiles.get(tileId).collision;
     }
 }
