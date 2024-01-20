@@ -3,6 +3,7 @@ package tile;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
+import javax.naming.directory.InvalidAttributesException;
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
@@ -10,8 +11,8 @@ import java.util.Objects;
 
 public class TileManager {
     GamePanel gp;
-    HashMap<Integer, Tile> tiles;
-    int[][] mapTileNum;
+    public HashMap<Integer, Tile> tiles;
+    public int[][] mapTileNum;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -40,6 +41,10 @@ public class TileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        activateCollisionFor("treeTile");
+        activateCollisionFor("brickTile");
+        activateCollisionFor("waterTile");
     }
 
     private String removeFileExtension(File file) {
@@ -95,12 +100,27 @@ public class TileManager {
         }
     }
 
-
-
     private boolean tileIsWithinBounds(int screenX, int screenY) {
         return  screenX + gp.tileSize > 0 &&
                 screenX - gp.tileSize < gp.screenWidth &&
                 screenY + gp.tileSize > 0 &&
                 screenY - gp.tileSize < gp.screenHeight;
+    }
+
+    private void activateCollisionFor(String tileType) {
+        int tileId = getIdForTile(tileType);
+        if (tileId == -1) {
+            System.out.println("Ayo wtf wrong tile bro");
+        }
+        tiles.get(tileId).activateCollision();
+    }
+
+    private int getIdForTile(String tileType) {
+        for (Tile tile : tiles.values()) {
+            if (tile.type.equals(tileType)) {
+                return tile.id;
+            }
+        }
+        return -1;
     }
 }
