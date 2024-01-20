@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +15,29 @@ public class GamePanel extends JPanel implements Runnable {
     public final int tileSize = originalTileSize * scale;
 
     // Window Size
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol; // 768 px
-    final int screenHeight = tileSize * maxScreenRow; // 576 px
+    public final int maxScreenCol = 16;
+    public final int maxScreenRow = 12;
+    public final int screenWidth = tileSize * maxScreenCol; // 768 px
+    public final int screenHeight = tileSize * maxScreenRow; // 576 px
 
     // FPS
     int FPS = 60;
 
     // --- END OF SCREEN SETTINGS ---
 
+    // -- WORLD SETTINGS ---
+
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
+
+    // --- END OF WORLD SETTINGS ---
+
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
-    Player player = new Player(this, keyH);
+    public Player player = new Player(this, keyH);
+    TileManager tileManager = new TileManager(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -83,8 +94,18 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
+
+        tileManager.draw(g2);
         player.draw(g2);
 
         g2.dispose();
+    }
+
+    public int getScreenY(int worldY) {
+        return worldY - player.worldY + player.screenY;
+    }
+
+    public int getScreenX(int worldX) {
+        return worldX - player.worldX + player.screenX;
     }
 }
