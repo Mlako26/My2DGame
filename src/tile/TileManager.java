@@ -1,6 +1,7 @@
 package tile;
 
 import main.GamePanel;
+import main.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,37 +14,72 @@ public class TileManager {
     public HashMap<Integer, Tile> tiles;
     public int[][] mapTileNum;
 
+    // --- INDEXES ---
+    final int TILE_ID_INDEX = 0;
+    final int TILE_NAME_INDEX = 1;
+    final int TILE_COLLISION_INDEX = 2;
+
+
     public TileManager(GamePanel gp) {
         this.gp = gp;
         tiles = new HashMap<>();
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-        getTileImages();
+        getTiles();
         loadMap("testWorld");
     }
 
-    public void getTileImages() {
+    public void getTiles() {
         try {
             File dir = new File("./res/tiles");
 
             File[] files = dir.listFiles();
             if (files != null) {
-                for (File tileImage : files) {
-                    String tileNameAndCode = removeFileExtension(tileImage);
-                    String tileName = getTileName(tileNameAndCode);
-                    int tileId = getTileId(tileNameAndCode);
-                    Tile nextTileType = new Tile(tileName, tileId);
-                    nextTileType.image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/" + tileImage.getName())));
-                    tiles.put(nextTileType.id, nextTileType);
+                for (File tileType : files) {
+                    // Create the new Tile Type
+                    String[] tileProperties = getTileProperties(tileType);
+
+                    int tileId = parseTileId(tileProperties[TILE_ID_INDEX]);
+                    String tileName = tileProperties[TILE_NAME_INDEX];
+                    boolean tileCollision = parseTileCollision(tileProperties[TILE_COLLISION_INDEX]);
+
+                    addTile(tileType.getName(), tileId, tileName, tileCollision);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void addTile(String fileName, int id, String name, boolean collision) {
+        UtilityTool tool = new UtilityTool();
+
+        try {
+            Tile newTileType = new Tile(name, id);
+
+            // Imports and scales image
+            newTileType.image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/" + fileName)));
+            newTileType.image = tool.scaleImage(newTileType.image, gp.tileSize, gp.tileSize);
+
+            if (collision) newTileType.activateCollision();
+
+            tiles.put(newTileType.id, newTileType);
+
+        } catch(IOException e) {
             e.printStackTrace();
         }
+    }
 
-        activateCollisionFor("treeTile");
-        activateCollisionFor("brickTile");
-        activateCollisionFor("waterTile");
+    public String[] getTileProperties(File tileFile) {
+        return removeFileExtension(tileFile).split("_");
+    }
+
+    public int parseTileId(String id) {
+        return Integer.parseInt(id);
+    }
+
+    public boolean parseTileCollision(String collision) {
+        return collision.equals("C");
     }
 
     private String removeFileExtension(File file) {
@@ -51,20 +87,10 @@ public class TileManager {
         return parts[0];
     }
 
-    private String getTileName(String nameAndId) {
-        String[] parts = nameAndId.split("_");
-        return parts[1];
-    }
-
-    private int getTileId(String nameAndId) {
-        String[] parts = nameAndId.split("_");
-        return Integer.parseInt(parts[0]);
-    }
-
     public void loadMap(String file) {
         try {
-            if (!file.contains("/maps")) file = "/maps/" + file;
-            if (!file.contains(".txt")) file = file + ".txt";
+            file = formatMapFileName(file);
+
             InputStream is = getClass().getResourceAsStream(file);
             BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
 
@@ -81,6 +107,12 @@ public class TileManager {
         }
     }
 
+    private static String formatMapFileName(String file) {
+        if (!file.contains("/maps")) file = "/maps/" + file;
+        if (!file.contains(".txt")) file = file + ".txt";
+        return file;
+    }
+
     public void draw(Graphics2D g2) {
         for (int xPos = 0; xPos < gp.maxWorldCol; xPos++) {
             for (int yPos = 0; yPos < gp.maxWorldRow; yPos++) {
@@ -93,7 +125,7 @@ public class TileManager {
                 int screenY = gp.getScreenY(worldY);
 
                 if (tileIsWithinBounds(screenX, screenY)) {
-                    g2.drawImage(tiles.get(tileType).image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                    g2.drawImage(tiles.get(tileType).image, screenX, screenY, null);
                 }
             }
         }
@@ -104,23 +136,6 @@ public class TileManager {
                 screenX - gp.tileSize < gp.screenWidth &&
                 screenY + gp.tileSize > 0 &&
                 screenY - gp.tileSize < gp.screenHeight;
-    }
-
-    private void activateCollisionFor(String tileType) {
-        int tileId = getIdForTile(tileType);
-        if (tileId == -1) {
-            System.out.println("Ayo wtf wrong tile bro");
-        }
-        tiles.get(tileId).activateCollision();
-    }
-
-    private int getIdForTile(String tileType) {
-        for (Tile tile : tiles.values()) {
-            if (tile.type.equals(tileType)) {
-                return tile.id;
-            }
-        }
-        return -1;
     }
 
     public boolean isCollideable(int tileId) {

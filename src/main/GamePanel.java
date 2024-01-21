@@ -32,18 +32,28 @@ public class GamePanel extends JPanel implements Runnable {
 
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
 
     // --- END OF WORLD SETTINGS  ---
 
+    // --- GAME SYSTEM VARIABLES ---
+
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
-    public Player player = new Player(this, keyH);
     public TileManager tileManager = new TileManager(this);
     public CollisionDetector collisionDetector = new CollisionDetector(this);
     public AssetSetter assetSetter = new AssetSetter(this);
+    Sound music = new Sound();
+    public Sound soundEffect = new Sound();
+    public UserInterface ui = new UserInterface(this);
+
+    // --- END OF GAME SYSTEM VARIABLES ---
+
+    // --- ENTITIES ---
+
+    public Player player = new Player(this, keyH);
     public ArrayList<GameObject> objects = new ArrayList<>();
+
+    // --- END OF ENTITIES ---
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -54,7 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
-        assetSetter.setObjects();
+        objects = assetSetter.setObjects();
+        playMusic(0);
     }
 
     public void startGameThread() {
@@ -104,15 +115,22 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        long drawStart = System.nanoTime();
 
         tileManager.draw(g2);
-
         for (GameObject object : objects) {
             object.draw(g2, this);
         }
-
         player.draw(g2);
+        ui.draw(g2);
 
+        long drawEnd = System.nanoTime();
+        if (keyH.debugMode) {
+            g2.setColor(Color.white);
+            g2.drawString("Draw time: " + (drawEnd - drawStart) / 1e6,10, 400);
+            g2.drawString("X: " + player.worldX / tileSize + ", Y: " + player.worldY / tileSize, tileSize / 2, tileSize * 3);
+            System.out.println("Draw time: " + (drawEnd - drawStart));
+        }
         g2.dispose();
     }
 
@@ -131,4 +149,53 @@ public class GamePanel extends JPanel implements Runnable {
     public boolean isCollideable(int tileType) {
         return tileManager.isCollideable(tileType);
     }
+
+    public void playMusic(int i) {
+        music.setFile(i);
+        music.play();
+        music.loop();
+    }
+
+    public void stopMusic() {
+        music.stop();
+    }
+
+    public void playSoundEffect(int i) {
+        soundEffect.setFile(i);
+        soundEffect.play();
+    }
+
+    public void playerGrabbedKey(int i) {
+        consumeObject(i, 1);
+        ui.displayMessage("Agarraste una llave pa!");
+    }
+
+    public void playerOpenedDoor(int i) {
+        consumeObject(i, 3);
+        ui.displayMessage("Hiciste pija la puerta no way!");
+    }
+
+    public void playerCantOpenDoor() {
+        ui.displayMessage("Todavia no la podes abrir...");
+    }
+
+    public void playerGrabbedBoots(int i) {
+        consumeObject(i,2);
+        ui.displayMessage("MEEEEEESSSSSSIIIIIIII");
+    }
+
+    public void playerOpenedChest() {
+        if (!ui.gameIsFinished) {
+            ui.gameIsFinished = true;
+            stopMusic();
+            playSoundEffect(4);
+        }
+    }
+
+    private void consumeObject(int objectIndex, int soundEffectIndex) {
+        playSoundEffect(soundEffectIndex);
+        objects.remove(objectIndex);
+    }
 }
+
+

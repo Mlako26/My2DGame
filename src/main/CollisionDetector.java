@@ -1,6 +1,7 @@
 package main;
 
 import entity.Entity;
+import object.GameObject;
 
 public class CollisionDetector {
     GamePanel gp;
@@ -95,6 +96,74 @@ public class CollisionDetector {
         if (gp.isCollideable(tileId1) || gp.isCollideable(tileId2)) {
             currentEntity.rightCollisionOn = true;
         }
+    }
+
+    public int checkObject(Entity entity, boolean player) {
+        int index = -1;
+
+        entity.solidArea.x += entity.worldX;
+        entity.solidArea.y += entity.worldY;
+        for (int i = 0; i < gp.objects.size(); i++) {
+            GameObject object = gp.objects.get(i);
+            object.solidArea.x = object.worldX + object.solidArea.x;
+            object.solidArea.y = object.worldY + object.solidArea.y;
+
+            // Check Up
+            entity.solidArea.y -= entity.speed;
+            if (entity.solidArea.intersects(object.solidArea)) {
+                if (object.collision) {
+                    entity.topCollisionOn = true;
+                }
+                if (player) {
+                    index = i;
+                }
+            }
+            entity.solidArea.y += entity.speed;
+
+            // Check Down
+            entity.solidArea.y += entity.speed;
+            if (entity.solidArea.intersects(object.solidArea)) {
+                if (object.collision) {
+                    entity.bottomCollisionOn = true;
+                }
+                if (player) {
+                    index = i;
+                }
+            }
+            entity.solidArea.y -= entity.speed;
+
+            // Check Left
+            entity.solidArea.x -= entity.speed;
+            if (entity.solidArea.intersects(object.solidArea)) {
+                if (object.collision) {
+                    entity.leftCollisionOn = true;
+                }
+                if (player) {
+                    index = i;
+                }
+            }
+            entity.solidArea.x += entity.speed;
+
+            // Check Right
+            entity.solidArea.x += entity.speed;
+            if (entity.solidArea.intersects(object.solidArea)) {
+                if (object.collision) {
+                    entity.rightCollisionOn = true;
+                }
+                if (player) {
+                    index = i;
+                }
+            }
+            entity.solidArea.x -= entity.speed;
+
+            object.solidArea.x = object.solidAreaDefaultX;
+            object.solidArea.y = object.solidAreaDefaultY;
+        }
+
+        entity.solidArea.x = entity.solidAreaDefaultX;
+        entity.solidArea.y = entity.solidAreaDefaultY;
+
+        return index;
     }
 
 }

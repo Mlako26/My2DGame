@@ -1,16 +1,9 @@
 package object;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
+import main.GamePanel;
 
 public class OBJ_Key extends GameObject {
-    public OBJ_Key() {
-
-        name = "key";
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("/objects/key.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public OBJ_Key(GamePanel gp, int x, int y) {
+        super(gp, x, y, "key", false);
     }
 }

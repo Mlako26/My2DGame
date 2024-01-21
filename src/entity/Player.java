@@ -2,6 +2,7 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
+import main.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,6 +19,9 @@ public class Player extends Entity{
     public final int screenX;
     public final int screenY;
 
+    // Inventory
+    public int keys = 0;
+
     public Player(GamePanel gamePanel, KeyHandler keyH) {
         this.gamePanel = gamePanel;
         this.keyH = keyH;
@@ -27,52 +31,67 @@ public class Player extends Entity{
 
         int hitBoxSize = 28;
         solidArea = new Rectangle(8, 16, hitBoxSize, hitBoxSize);
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        worldX = gamePanel.tileSize * 25;
-        worldY = gamePanel.tileSize * 20;
+        worldX = gamePanel.tileSize * 24;
+        worldY = gamePanel.tileSize * 30;
         speed = 4;
         direction = "down";
     }
 
     public void getPlayerImage() {
-        try {
-            up1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up1.png")));
-            up2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up2.png")));
-            down1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down1.png")));
-            down2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down2.png")));
-            right1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png")));
-            right2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png")));
-            left1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left1.png")));
-            left2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left2.png")));
+        up1 = setup("up1");
+        up2 = setup("up2");
+        down1 = setup("down1");
+        down2 = setup("down2");
+        left1 = setup("left1");
+        left2 = setup("left2");
+        right1 = setup("right1");
+        right2 = setup("right2");
+    }
 
+    public BufferedImage setup(String name) {
+        UtilityTool tool = new UtilityTool();
+        BufferedImage scaledImage = null;
+        try {
+            BufferedImage original = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/" + name + ".png")));
+            scaledImage = tool.scaleImage(original, gamePanel.tileSize, gamePanel.tileSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return scaledImage;
     }
 
     public void update() {
         if (keyH.anyKeyIsPressed()) {
-            resetCollisions();
 
+            resetCollisions();
             gamePanel.updateCollisionsFor(this);
+
+            int objIndex = gamePanel.collisionDetector.checkObject(this, true);
+            pickUpObject(objIndex);
 
             if (keyH.upPressed && !topCollisionOn) {
                 worldY -= speed;
                 direction = "up";
             }
+
             if (keyH.downPressed && !bottomCollisionOn) {
                 worldY += speed;
                 direction = "down";
             }
+
             if (keyH.leftPressed && !leftCollisionOn) {
                 worldX -= speed;
                 direction = "left";
             }
+
             if (keyH.rightPressed && !rightCollisionOn) {
                 worldX += speed;
                 direction = "right";
@@ -101,6 +120,35 @@ public class Player extends Entity{
         leftCollisionOn = false;
     }
 
+    public void pickUpObject(int i) {
+        if (i == -1) {
+            return;
+        }
+        String objectName = gamePanel.objects.get(i).name;
+
+        switch(objectName) {
+            case "key":
+                gamePanel.playerGrabbedKey(i);
+                keys++;
+                break;
+            case "door":
+                if (keys > 0) {
+                    gamePanel.playerOpenedDoor(i);
+                    keys--;
+                } else {
+                    gamePanel.playerCantOpenDoor();
+                }
+                break;
+            case "boots":
+                gamePanel.playerGrabbedBoots(i);
+                speed += 2;
+                break;
+            case "chest":
+                gamePanel.playerOpenedChest();
+                break;
+        }
+    }
+
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
 
@@ -123,6 +171,6 @@ public class Player extends Entity{
                 break;
         }
 
-        g2.drawImage(image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+        g2.drawImage(image, screenX, screenY, null);
     }
 }

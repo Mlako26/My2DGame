@@ -20,6 +20,5 @@ public class main {
 
         gamePanel.setupGame();
         gamePanel.startGameThread();
-
     }
 }
