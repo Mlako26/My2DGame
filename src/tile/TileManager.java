@@ -15,10 +15,8 @@ public class TileManager {
     public int[][] mapTileNum;
 
     // --- INDEXES ---
-    final int TILE_ID_INDEX = 0;
-    final int TILE_NAME_INDEX = 1;
-    final int TILE_COLLISION_INDEX = 2;
-
+    final int TILE_COLLISION_INDEX = 0;
+    final int TILE_ID_INDEX = 1;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -26,7 +24,7 @@ public class TileManager {
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         getTiles();
-        loadMap("testWorld");
+        loadMap("world0");
     }
 
     public void getTiles() {
@@ -40,10 +38,9 @@ public class TileManager {
                     String[] tileProperties = getTileProperties(tileType);
 
                     int tileId = parseTileId(tileProperties[TILE_ID_INDEX]);
-                    String tileName = tileProperties[TILE_NAME_INDEX];
                     boolean tileCollision = parseTileCollision(tileProperties[TILE_COLLISION_INDEX]);
 
-                    addTile(tileType.getName(), tileId, tileName, tileCollision);
+                    addTile(tileType.getName(), tileId, tileCollision);
                 }
             }
         } catch (Exception e) {
@@ -51,11 +48,11 @@ public class TileManager {
         }
     }
 
-    public void addTile(String fileName, int id, String name, boolean collision) {
+    public void addTile(String fileName, int id, boolean collision) {
         UtilityTool tool = new UtilityTool();
 
         try {
-            Tile newTileType = new Tile(name, id);
+            Tile newTileType = new Tile(id);
 
             // Imports and scales image
             newTileType.image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/" + fileName)));
@@ -114,6 +111,9 @@ public class TileManager {
     }
 
     public void draw(Graphics2D g2) {
+
+
+
         for (int xPos = 0; xPos < gp.maxWorldCol; xPos++) {
             for (int yPos = 0; yPos < gp.maxWorldRow; yPos++) {
                 int tileType = mapTileNum[xPos][yPos];

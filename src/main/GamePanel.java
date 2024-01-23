@@ -32,6 +32,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
+    public final int worldHeight = maxWorldRow * tileSize;
+    public final int worldWidth = maxWorldCol * tileSize;
 
     // --- END OF WORLD SETTINGS  ---
 
@@ -131,6 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("X: " + player.worldX / tileSize + ", Y: " + player.worldY / tileSize, tileSize / 2, tileSize * 3);
             System.out.println("Draw time: " + (drawEnd - drawStart));
         }
+
         g2.dispose();
     }
 
@@ -196,6 +199,7 @@ public class GamePanel extends JPanel implements Runnable {
         playSoundEffect(soundEffectIndex);
         objects.remove(objectIndex);
     }
+
 }
 
 

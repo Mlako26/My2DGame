@@ -6,11 +6,9 @@ public class Tile {
     public BufferedImage image;
     public boolean collision = false;
 
-    public String type;
     public int id;
 
-    public Tile(String type, int id) {
-        this.type = type;
+    public Tile( int id) {
         this.id = id;
     }
 

@@ -39,8 +39,8 @@ public class Player extends Entity{
     }
 
     public void setDefaultValues() {
-        worldX = gamePanel.tileSize * 24;
-        worldY = gamePanel.tileSize * 30;
+        worldX = gamePanel.tileSize * 25;
+        worldY = gamePanel.tileSize * 42;
         speed = 4;
         direction = "down";
     }
@@ -96,6 +96,7 @@ public class Player extends Entity{
                 worldX += speed;
                 direction = "right";
             }
+
 
             spriteCounter++;
             if (spriteCounter > 12) {
@@ -173,4 +174,5 @@ public class Player extends Entity{
 
         g2.drawImage(image, screenX, screenY, null);
     }
+
 }

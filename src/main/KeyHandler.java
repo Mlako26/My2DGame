@@ -47,6 +47,7 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D) {
             rightPressed = false;
         }
+
         // DEBUG
         if (code == KeyEvent.VK_T) {
             debugMode = !debugMode;

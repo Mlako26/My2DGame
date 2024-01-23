@@ -5,8 +5,10 @@
 - [X] Allow Player to move diagonaly when colliding in only one direction.
 - [X] Fix diagonal movement.
 
-- [] Move castle down a bit, finish building map (looks a bit clunky)
+- [X] Move castle down a bit, finish building map (looks a bit clunky)
 - [] Place flowers on castle!!
-- [] probably should do the camera thing yeah.
-- [] Make castle a bit longer.
-- [] Add object collision and interaction.
+- [X] Make castle a bit longer.
+- [X] Add object collision and interaction.
+
+- [] Make object placing automation.
+- [] Make world builder.
