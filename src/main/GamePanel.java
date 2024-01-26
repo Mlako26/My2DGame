@@ -1,8 +1,11 @@
 package main;
 
+import collidable.Collidable;
 import entity.Entity;
 import entity.Player;
 import object.GameObject;
+import state.GameState;
+import state.PlayGameState;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -32,15 +35,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
-    public final int worldHeight = maxWorldRow * tileSize;
-    public final int worldWidth = maxWorldCol * tileSize;
 
     // --- END OF WORLD SETTINGS  ---
 
     // --- GAME SYSTEM VARIABLES ---
 
     Thread gameThread;
-    KeyHandler keyH = new KeyHandler();
+    KeyHandler keyH = new KeyHandler(this);
     public TileManager tileManager = new TileManager(this);
     public CollisionDetector collisionDetector = new CollisionDetector(this);
     public AssetSetter assetSetter = new AssetSetter(this);
@@ -53,9 +54,16 @@ public class GamePanel extends JPanel implements Runnable {
     // --- ENTITIES ---
 
     public Player player = new Player(this, keyH);
-    public ArrayList<GameObject> objects = new ArrayList<>();
+    public ArrayList<Collidable> objects = new ArrayList<>();
+    public ArrayList<Collidable> npcs = new ArrayList<>();
 
     // --- END OF ENTITIES ---
+
+    // --- GAME STATE ---
+
+    GameState gameState = new PlayGameState();
+
+    // --- END OF GAME STATE ---
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -67,6 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         objects = assetSetter.setObjects();
+        npcs = assetSetter.setNPC();
         playMusic(0);
     }
 
@@ -110,7 +119,19 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        gameState.updatePanel(this);
+    }
+
+    public void updateOnPlayState() {
         player.update();
+        for (Collidable collidable : npcs) {
+            Entity npc = (Entity) collidable;
+            npc.update();
+        }
+    }
+
+    public void updateOnPauseState() {
+
     }
 
     public void paintComponent(Graphics g) {
@@ -120,10 +141,18 @@ public class GamePanel extends JPanel implements Runnable {
         long drawStart = System.nanoTime();
 
         tileManager.draw(g2);
-        for (GameObject object : objects) {
+        for (Collidable collidable : objects) {
+            GameObject object = (GameObject) collidable;
             object.draw(g2, this);
         }
+
+        for (Collidable collidable : npcs) {
+            Entity npc = (Entity) collidable;
+            npc.draw(g2);
+        }
+
         player.draw(g2);
+
         ui.draw(g2);
 
         long drawEnd = System.nanoTime();
@@ -145,10 +174,6 @@ public class GamePanel extends JPanel implements Runnable {
         return worldX - player.worldX + player.screenX;
     }
 
-    public void updateCollisionsFor(Entity entity) {
-        collisionDetector.updateCollisionsFor(entity);
-    }
-
     public boolean isCollideable(int tileType) {
         return tileManager.isCollideable(tileType);
     }
@@ -168,37 +193,30 @@ public class GamePanel extends JPanel implements Runnable {
         soundEffect.play();
     }
 
-    public void playerGrabbedKey(int i) {
-        consumeObject(i, 1);
-        ui.displayMessage("Agarraste una llave pa!");
+    public void changePausedState() {
+        gameState = gameState.changePausedState();
     }
 
-    public void playerOpenedDoor(int i) {
-        consumeObject(i, 3);
-        ui.displayMessage("Hiciste pija la puerta no way!");
+    public void updateInterface() {
+        gameState.updateInterface(ui);
     }
 
-    public void playerCantOpenDoor() {
-        ui.displayMessage("Todavia no la podes abrir...");
+    public void updateTileCollisionsFor(Entity entity) {
+        collisionDetector.updateTileCollisionsFor(entity);
     }
 
-    public void playerGrabbedBoots(int i) {
-        consumeObject(i,2);
-        ui.displayMessage("MEEEEEESSSSSSIIIIIIII");
+    public int updateNPCCollisionsFor(Entity entity) {
+        return collisionDetector.updateCollisionsFor(entity, npcs);
     }
 
-    public void playerOpenedChest() {
-        if (!ui.gameIsFinished) {
-            ui.gameIsFinished = true;
-            stopMusic();
-            playSoundEffect(4);
-        }
+    public void updatePlayerCollisionFor(Entity entity) {
+        collisionDetector.updateCollisionWithPlayerFor(entity);
     }
 
-    private void consumeObject(int objectIndex, int soundEffectIndex) {
-        playSoundEffect(soundEffectIndex);
-        objects.remove(objectIndex);
+    public int updateObjectCollisionsFor(Entity entity) {
+        return collisionDetector.updateCollisionsFor(entity, objects);
     }
+
 
 }
 

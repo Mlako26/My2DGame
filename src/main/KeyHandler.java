@@ -7,6 +7,11 @@ public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     boolean debugMode = false;
+    GamePanel gp;
+
+    public KeyHandler(GamePanel gp) {
+        this.gp = gp;
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -51,6 +56,10 @@ public class KeyHandler implements KeyListener {
         // DEBUG
         if (code == KeyEvent.VK_T) {
             debugMode = !debugMode;
+        }
+
+        if (code == KeyEvent.VK_ESCAPE) {
+            gp.changePausedState();
         }
     }
 

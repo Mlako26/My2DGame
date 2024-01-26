@@ -1,7 +1,9 @@
 package main;
 
+import collidable.Collidable;
 import entity.Entity;
-import object.GameObject;
+
+import java.util.ArrayList;
 
 public class CollisionDetector {
     GamePanel gp;
@@ -23,7 +25,7 @@ public class CollisionDetector {
         this.gp = gp;
     }
 
-    public void updateCollisionsFor(Entity entity) {
+    public void updateTileCollisionsFor(Entity entity) {
         this.currentEntity = entity;
 
         getEntityHitBoxWorldPos();
@@ -98,72 +100,70 @@ public class CollisionDetector {
         }
     }
 
-    public int checkObject(Entity entity, boolean player) {
+    public int updateCollisionsFor(Entity entity, ArrayList<Collidable> collidablesToCheck) {
         int index = -1;
 
         entity.solidArea.x += entity.worldX;
         entity.solidArea.y += entity.worldY;
-        for (int i = 0; i < gp.objects.size(); i++) {
-            GameObject object = gp.objects.get(i);
-            object.solidArea.x = object.worldX + object.solidArea.x;
-            object.solidArea.y = object.worldY + object.solidArea.y;
+        for (int i = 0; i < collidablesToCheck.size(); i++) {
+            Collidable collidableThing = collidablesToCheck.get(i);
+            collidableThing.solidArea.x = collidableThing.worldX + collidableThing.solidArea.x;
+            collidableThing.solidArea.y = collidableThing.worldY + collidableThing.solidArea.y;
 
             // Check Up
             entity.solidArea.y -= entity.speed;
-            if (entity.solidArea.intersects(object.solidArea)) {
-                if (object.collision) {
+            if (entity.solidArea.intersects(collidableThing.solidArea)) {
+                if (collidableThing.collisionOn) {
                     entity.topCollisionOn = true;
                 }
-                if (player) {
-                    index = i;
-                }
+                index = i;
             }
             entity.solidArea.y += entity.speed;
 
             // Check Down
             entity.solidArea.y += entity.speed;
-            if (entity.solidArea.intersects(object.solidArea)) {
-                if (object.collision) {
+            if (entity.solidArea.intersects(collidableThing.solidArea)) {
+                if (collidableThing.collisionOn) {
                     entity.bottomCollisionOn = true;
                 }
-                if (player) {
-                    index = i;
-                }
+                index = i;
             }
             entity.solidArea.y -= entity.speed;
 
             // Check Left
             entity.solidArea.x -= entity.speed;
-            if (entity.solidArea.intersects(object.solidArea)) {
-                if (object.collision) {
+            if (entity.solidArea.intersects(collidableThing.solidArea)) {
+                if (collidableThing.collisionOn) {
                     entity.leftCollisionOn = true;
                 }
-                if (player) {
-                    index = i;
-                }
+                index = i;
             }
             entity.solidArea.x += entity.speed;
 
             // Check Right
             entity.solidArea.x += entity.speed;
-            if (entity.solidArea.intersects(object.solidArea)) {
-                if (object.collision) {
+            if (entity.solidArea.intersects(collidableThing.solidArea)) {
+                if (collidableThing.collisionOn) {
                     entity.rightCollisionOn = true;
                 }
-                if (player) {
-                    index = i;
-                }
+                index = i;
             }
             entity.solidArea.x -= entity.speed;
 
-            object.solidArea.x = object.solidAreaDefaultX;
-            object.solidArea.y = object.solidAreaDefaultY;
+            collidableThing.solidArea.x = collidableThing.solidAreaDefaultX;
+            collidableThing.solidArea.y = collidableThing.solidAreaDefaultY;
         }
 
         entity.solidArea.x = entity.solidAreaDefaultX;
         entity.solidArea.y = entity.solidAreaDefaultY;
 
         return index;
+    }
+
+    public void updateCollisionWithPlayerFor(Entity entity) {
+        ArrayList<Collidable> playerArray = new ArrayList<>();
+        playerArray.add(gp.player);
+        updateCollisionsFor(entity, playerArray);
     }
 
 }
