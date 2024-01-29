@@ -217,6 +217,10 @@ public class GamePanel extends JPanel implements Runnable {
         return collisionDetector.updateCollisionsFor(entity, objects);
     }
 
+    public void playerInteractedWithNPC(int npcIndex) {
+        gameState = new DialogueGameState();
+        ui.updateDialogue(npcs.get(npcIndex).speak());
+    }
 
 }
 

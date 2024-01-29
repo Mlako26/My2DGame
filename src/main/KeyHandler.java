@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, interactPressed;
     boolean debugMode = false;
     GamePanel gp;
 
@@ -21,19 +21,39 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
 
-        if (code == KeyEvent.VK_W) {
-            upPressed = true;
+        if (code == KeyEvent.VK_ESCAPE) {
+            gp.changePausedState();
         }
-        if (code == KeyEvent.VK_S) {
-            downPressed = true;
-        }
-        if (code == KeyEvent.VK_A) {
-            leftPressed = true;
-        }
-        if (code == KeyEvent.VK_D) {
-            rightPressed = true;
+        
+        if (gp.gameState instanceof PlayGameState) {
+            if (code == KeyEvent.VK_W) {
+                upPressed = true;
+            }
+            if (code == KeyEvent.VK_S) {
+                downPressed = true;
+            }
+            if (code == KeyEvent.VK_A) {
+                leftPressed = true;
+            }
+            if (code == KeyEvent.VK_D) {
+                rightPressed = true;
+            }
+            if (code == KeyEvent.VK_E) {
+                interactPressed = true;
+            }
+
+            
+            // DEBUG
+            if (code == KeyEvent.VK_T) {
+                debugMode = !debugMode;
+            }
         }
 
+        if (gp.gameState instanceof DialogueGameState) {
+            if (code == KeyEvent.VK_ENTER) {
+                gp.gameState = new PlayGameState();
+            }
+        }
     }
 
     @Override
@@ -51,15 +71,6 @@ public class KeyHandler implements KeyListener {
         }
         if (code == KeyEvent.VK_D) {
             rightPressed = false;
-        }
-
-        // DEBUG
-        if (code == KeyEvent.VK_T) {
-            debugMode = !debugMode;
-        }
-
-        if (code == KeyEvent.VK_ESCAPE) {
-            gp.changePausedState();
         }
     }
 
