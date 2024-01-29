@@ -37,6 +37,13 @@ public class Entity extends Collidable {
 
     // --- END OF COLLISION ---
 
+    // --- DIALOGUES ---
+
+    String[] dialogue = new String[20];
+    int dialogueIndex = 0;
+
+    // -- END OF DIALOGUES ---
+
     public Entity(GamePanel gp, int worldX, int worldY) {
         super(gp, worldX, worldY, true);
         setDefaultValues();
@@ -158,5 +165,29 @@ public class Entity extends Collidable {
         bottomCollisionOn = false;
         rightCollisionOn = false;
         leftCollisionOn = false;
+    }
+
+    public String speak() {
+        faceThePlayer();
+
+        if (dialogueIndex <  dialogue.length) dialogueIndex++;
+        return dialogue[dialogueIndex - 1];
+    }
+    
+    public void faceThePlayer() {
+        switch (gp.player.direction) {
+            case "up":
+                direction = "down";
+                break;
+            case "down":
+                direction = "up";
+                break;
+            case "left":
+                direction = "right";
+                break;
+            case "right":
+                direction = "left";
+                break;
+        }
     }
 }

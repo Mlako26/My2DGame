@@ -105,5 +105,10 @@ public class Player extends Entity {
         if (npcIndex == -1) {
             return;
         }
+
+        if (gp.keyH.interactPressed) {
+            gp.playerInteractedWithNPC(npcIndex);
+            gp.keyH.interactPressed = false;
+        }
     }
 }
