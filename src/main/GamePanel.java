@@ -59,7 +59,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // --- GAME STATE ---
 
-    GameState gameState = new PlayGameState();
+    GameState gameState = new TitleGameState();
 
     // --- END OF GAME STATE ---
 
@@ -74,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         objects = assetSetter.setObjects();
         npcs = assetSetter.setNPC();
-        playMusic(0);
+        // playMusic(0);
     }
 
     public void startGameThread() {
@@ -137,6 +137,25 @@ public class GamePanel extends JPanel implements Runnable {
 
         long drawStart = System.nanoTime();
 
+        gameState.whatShouldIPaint(this, g2);
+
+        long drawEnd = System.nanoTime();
+        if (keyH.debugMode) {
+            g2.setColor(Color.white);
+            g2.drawString("Draw time: " + (drawEnd - drawStart) / 1e6,10, 400);
+            g2.drawString("X: " + player.worldX / tileSize + ", Y: " + player.worldY / tileSize, tileSize / 2, tileSize * 3);
+            System.out.println("Draw time: " + (drawEnd - drawStart));
+        }
+
+        g2.dispose();
+    }
+
+    public void paintTitle(Graphics2D g2) {
+        ui.draw(g2);
+    }
+
+    public void paintGame(Graphics2D g2) {
+
         tileManager.draw(g2);
         for (GameObject object : objects) {
             object.draw(g2, this);
@@ -149,16 +168,6 @@ public class GamePanel extends JPanel implements Runnable {
         player.draw(g2);
 
         ui.draw(g2);
-
-        long drawEnd = System.nanoTime();
-        if (keyH.debugMode) {
-            g2.setColor(Color.white);
-            g2.drawString("Draw time: " + (drawEnd - drawStart) / 1e6,10, 400);
-            g2.drawString("X: " + player.worldX / tileSize + ", Y: " + player.worldY / tileSize, tileSize / 2, tileSize * 3);
-            System.out.println("Draw time: " + (drawEnd - drawStart));
-        }
-
-        g2.dispose();
     }
 
     public int getScreenY(int worldY) {

@@ -26,6 +26,53 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ESCAPE) {
             gp.changePausedState();
         }
+
+        if (gp.gameState instanceof TitleGameState) {
+            if (gp.ui.titleScreenPage == 0) {
+                if (code == KeyEvent.VK_W) {
+                    gp.ui.command = (((gp.ui.command - 1) % 3) + 3) % 3;
+                }
+
+                if (code == KeyEvent.VK_S) {
+                    gp.ui.command = (gp.ui.command + 1) % 3;
+                }
+
+                if (code == KeyEvent.VK_ENTER) {
+                    switch (gp.ui.command) {
+                        case 0:
+                            gp.ui.titleScreenPage = 1;
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            System.exit(0);
+                    }
+                }
+            } else if (gp.ui.titleScreenPage == 1) {
+                if (code == KeyEvent.VK_W) {
+                    gp.ui.command = (((gp.ui.command - 1) % 4) + 4) % 4;
+                }
+
+                if (code == KeyEvent.VK_S) {
+                    gp.ui.command = (gp.ui.command + 1) % 4;
+                }
+
+                if (code == KeyEvent.VK_ENTER) {
+                    switch (gp.ui.command) {
+                        case 0:
+                        case 1:
+                        case 2:
+                            gp.gameState = new PlayGameState();
+                            gp.playMusic(0);
+                            break;
+                        case 3:
+                            gp.ui.titleScreenPage = 0;
+                            gp.ui.command = 0;
+                            break;
+                    }
+                }
+            }
+        }
         
         if (gp.gameState instanceof PlayGameState) {
             if (code == KeyEvent.VK_W) {

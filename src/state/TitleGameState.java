@@ -5,26 +5,24 @@ import main.UserInterface;
 
 import java.awt.*;
 
-public class PauseGameState implements GameState {
-
+public class TitleGameState implements GameState {
     @Override
     public void updatePanel(GamePanel gp) {
-        gp.updateOnPauseState();
+        gp.updateOnPlayState();
     }
 
     @Override
     public void updateInterface(UserInterface ui) {
-        ui.drawPauseScreen();
+        ui.drawTitleScreen();
     }
 
     @Override
     public GameState changePausedState() {
-        return new PlayGameState();
+        return new PauseGameState();
     }
 
     @Override
     public void whatShouldIPaint(GamePanel gp, Graphics2D g2) {
-        gp.paintGame(g2);
+        gp.paintTitle(g2);
     }
-
 }
