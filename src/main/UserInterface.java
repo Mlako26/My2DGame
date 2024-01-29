@@ -1,29 +1,39 @@
 package main;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class UserInterface {
 
     GamePanel gp;
     Graphics2D g2;
-    Font keyFont = new Font("Arial", Font.PLAIN, 40);
+    Font defaultFont = new Font("Arial", Font.PLAIN, 40);
     public String currentDialogue = "";
 
     public UserInterface(GamePanel gp) {
         this.gp = gp;
+
+        InputStream is = getClass().getResourceAsStream("/font/x12y16pxMaruMonica.ttf");
+        try {
+            assert is != null;
+            defaultFont = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
 
-        g2.setFont(keyFont);
+        g2.setFont(defaultFont);
         g2.setColor(Color.white);
 
         gp.updateInterface();
     }
 
     public void drawPauseScreen() {
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN,80F));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 80F));
         String text = "PAUSED";
         int x = getXForCenteredText(text);
         int y = gp.screenHeight / 2;
