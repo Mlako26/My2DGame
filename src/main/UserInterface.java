@@ -71,6 +71,6 @@ public class UserInterface {
     }
 
     public void updateDialogue(String newDialogue) {
-        this.currentDialogue = newDIalogue;
+        this.currentDialogue = newDialogue;
     }
 }

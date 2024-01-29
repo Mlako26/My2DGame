@@ -1,7 +1,9 @@
 package main;
 
-import collidable.Collidable;
+import entity.Entity;
 import entity.NPC_Explorer;
+import object.GameObject;
+
 import java.util.ArrayList;
 
 public class AssetSetter {
@@ -11,12 +13,12 @@ public class AssetSetter {
         this.gp = gp;
     }
 
-    public ArrayList<Collidable> setObjects() {
+    public ArrayList<GameObject> setObjects() {
         return new ArrayList<>();
     }
 
-    public ArrayList<Collidable> setNPC() {
-        ArrayList<Collidable> npcs = new ArrayList<>();
+    public ArrayList<Entity> setNPC() {
+        ArrayList<Entity> npcs = new ArrayList<>();
 
         npcs.add(new NPC_Explorer(gp, 28, 42));
 

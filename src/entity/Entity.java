@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -39,8 +40,8 @@ public class Entity extends Collidable {
 
     // --- DIALOGUES ---
 
-    String[] dialogue = new String[20];
-    int dialogueIndex = 0;
+    ArrayList<String> dialogue = new ArrayList<>();
+    int dialogueIndex = -1;
 
     // -- END OF DIALOGUES ---
 
@@ -170,8 +171,8 @@ public class Entity extends Collidable {
     public String speak() {
         faceThePlayer();
 
-        if (dialogueIndex <  dialogue.length) dialogueIndex++;
-        return dialogue[dialogueIndex - 1];
+        if (dialogueIndex <  dialogue.size() - 1) dialogueIndex++;
+        return dialogue.get(dialogueIndex);
     }
     
     public void faceThePlayer() {

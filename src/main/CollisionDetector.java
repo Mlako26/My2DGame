@@ -100,7 +100,7 @@ public class CollisionDetector {
         }
     }
 
-    public int updateCollisionsFor(Entity entity, ArrayList<Collidable> collidablesToCheck) {
+    public int updateCollisionsFor(Entity entity, ArrayList<? extends Collidable> collidablesToCheck) {
         int index = -1;
 
         entity.solidArea.x += entity.worldX;

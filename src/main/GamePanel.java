@@ -1,11 +1,9 @@
 package main;
 
-import collidable.Collidable;
 import entity.Entity;
 import entity.Player;
 import object.GameObject;
-import state.GameState;
-import state.PlayGameState;
+import state.*;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -41,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     // --- GAME SYSTEM VARIABLES ---
 
     Thread gameThread;
-    KeyHandler keyH = new KeyHandler(this);
+    public KeyHandler keyH = new KeyHandler(this);
     public TileManager tileManager = new TileManager(this);
     public CollisionDetector collisionDetector = new CollisionDetector(this);
     public AssetSetter assetSetter = new AssetSetter(this);
@@ -54,8 +52,8 @@ public class GamePanel extends JPanel implements Runnable {
     // --- ENTITIES ---
 
     public Player player = new Player(this, keyH);
-    public ArrayList<Collidable> objects = new ArrayList<>();
-    public ArrayList<Collidable> npcs = new ArrayList<>();
+    public ArrayList<GameObject> objects = new ArrayList<>();
+    public ArrayList<Entity> npcs = new ArrayList<>();
 
     // --- END OF ENTITIES ---
 
@@ -124,8 +122,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void updateOnPlayState() {
         player.update();
-        for (Collidable collidable : npcs) {
-            Entity npc = (Entity) collidable;
+        for (Entity npc : npcs) {
             npc.update();
         }
     }
@@ -141,13 +138,11 @@ public class GamePanel extends JPanel implements Runnable {
         long drawStart = System.nanoTime();
 
         tileManager.draw(g2);
-        for (Collidable collidable : objects) {
-            GameObject object = (GameObject) collidable;
+        for (GameObject object : objects) {
             object.draw(g2, this);
         }
 
-        for (Collidable collidable : npcs) {
-            Entity npc = (Entity) collidable;
+        for (Entity npc : npcs) {
             npc.draw(g2);
         }
 

@@ -26,10 +26,10 @@ public class NPC_Explorer extends Entity {
     }
 
     public void setDialogue() {
-        dialogue[0] = "Hello, lad.";
-        dialogue[1] = "So, you've come to this island \nto find the trasure?";
-        dialogue[2] = "I'm still looking for it myself, \nlet me know if you find any clues!";
-        dialogue[3] = "Well, good luck with your hunt...";
+        dialogue.add("Hello, lad.");
+        dialogue.add("So, you've come to this island \nto find the trasure?");
+        dialogue.add("I'm still looking for it myself.\nI'll race you to it!");
+        dialogue.add("Well, good luck with your hunt...");
     }
 
     public String speak() {
