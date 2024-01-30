@@ -4,7 +4,7 @@ import main.GamePanel;
 
 import java.awt.*;
 
-public class Collidable {
+public abstract class Collidable {
     public GamePanel gp;
 
     public int worldX, worldY;
@@ -28,4 +28,6 @@ public class Collidable {
                 screenY + gp.tileSize > 0 &&
                 screenY - gp.tileSize < gp.screenHeight;
     }
+
+    public abstract void draw(Graphics2D g2);
 }

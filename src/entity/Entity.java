@@ -45,6 +45,13 @@ public class Entity extends Collidable {
 
     // -- END OF DIALOGUES ---
 
+    // --- CHARACTER STATUS ---
+
+    public int maxLife;
+    public int life;
+
+    // --- END OF CHARACTER STATUS ---
+
     public Entity(GamePanel gp, int worldX, int worldY) {
         super(gp, worldX, worldY, true);
         setDefaultValues();
@@ -56,7 +63,10 @@ public class Entity extends Collidable {
     }
 
     public void setDefaultValues() {
-
+        int hitBoxSize = 28;
+        solidArea = new Rectangle(8, 16, hitBoxSize, hitBoxSize);
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
     }
 
     public BufferedImage setup(String imagePath) {

@@ -28,7 +28,7 @@ public class GameObject extends Collidable {
         }
     }
 
-    public void draw(Graphics2D g2, GamePanel gp) {
+    public void draw(Graphics2D g2) {
         int screenX = gp.getScreenX(worldX);
         int screenY = gp.getScreenY(worldY);
 

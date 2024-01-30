@@ -25,13 +25,11 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
+        super.setDefaultValues();
         speed = 4;
         direction = "down";
-
-        int hitBoxSize = 28;
-        solidArea = new Rectangle(8, 16, hitBoxSize, hitBoxSize);
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
+        maxLife = 6;
+        life = maxLife;
     }
 
     public void getEntityImages() {
@@ -75,9 +73,9 @@ public class Player extends Entity {
                 direction = "right";
                 if (!rightCollisionOn) worldX += speed;
             }
-
             updateSpriteCounter();
 
+            gp.eventHandler.checkEvent();
         } else {
             spriteNum = 1;
         }

@@ -1,5 +1,7 @@
 package main;
 
+import object.OBJ_Heart;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,9 +14,13 @@ public class UserInterface {
     GamePanel gp;
     Graphics2D g2;
     Font defaultFont;
+
     public String currentDialogue = "";
+
     public int command = 0;
     public int titleScreenPage = 0;
+
+    BufferedImage heartFull, heartHalf, heartEmpty;
 
     public UserInterface(GamePanel gp) {
         this.gp = gp;
@@ -26,6 +32,11 @@ public class UserInterface {
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
+
+        OBJ_Heart heart = new OBJ_Heart(gp, 0,0);
+        heartFull = heart.image;
+        heartHalf = heart.image2;
+        heartEmpty = heart.image3;
     }
 
     public void draw(Graphics2D g2) {
@@ -62,7 +73,7 @@ public class UserInterface {
 
         text = "Fighter";
         x = getXForCenteredText(text);
-        y += gp.tileSize * 3;
+        y += gp.tileSize * 2;
         g2.drawString(text, x ,y);
         if (command == 0) {
             g2.drawString(">", x - gp.tileSize / 2, y);
@@ -167,6 +178,7 @@ public class UserInterface {
     }
 
     public void drawPauseScreen() {
+        drawPlayerLife();
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 80F));
         String text = "PAUSED";
         int x = getXForCenteredText(text);
@@ -176,10 +188,12 @@ public class UserInterface {
     }
 
     public void drawPlayScreen() {
-
+        drawPlayerLife();
     }
 
     public void drawDialogueScreen() {
+        drawPlayerLife();
+
         // DIALOGUE WINDOW
         int x = gp.tileSize * 2;
         int y = gp.tileSize / 2;
@@ -196,6 +210,26 @@ public class UserInterface {
             g2.drawString(line, x, y);
             y += 35;
         }
+    }
+
+    public void drawPlayerLife() {
+        int y = gp.tileSize/2;
+
+        // Draw max life
+        for (int i = 0, x = gp.tileSize/2; i < gp.player.maxLife/2; i++, x+=gp.tileSize) {
+            g2.drawImage(heartEmpty, x, y, null);
+        }
+
+        // Draw current life
+        int x = gp.tileSize/2;
+        for (int i = 0; i < gp.player.life/2; i++, x+=gp.tileSize) {
+            g2.drawImage(heartFull, x, y, null);
+        }
+
+        if (gp.player.life % 2 == 1) {
+            g2.drawImage(heartHalf, x, y, null);
+        }
+
     }
 
     public void drawSubWindow(int x, int y, int width, int height) {

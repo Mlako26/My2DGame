@@ -1,5 +1,6 @@
 package main;
 
+import collidable.Collidable;
 import entity.Entity;
 import entity.Player;
 import object.GameObject;
@@ -9,6 +10,7 @@ import tile.TileManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class GamePanel extends JPanel implements Runnable {
     // --- SCREEN SETTINGS --
@@ -46,6 +48,7 @@ public class GamePanel extends JPanel implements Runnable {
     Sound music = new Sound();
     public Sound soundEffect = new Sound();
     public UserInterface ui = new UserInterface(this);
+    public EventHandler eventHandler = new EventHandler(this);
 
     // --- END OF GAME SYSTEM VARIABLES ---
 
@@ -54,12 +57,13 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, keyH);
     public ArrayList<GameObject> objects = new ArrayList<>();
     public ArrayList<Entity> npcs = new ArrayList<>();
+    public ArrayList<Collidable> collidablesToRender = new ArrayList<>();
 
     // --- END OF ENTITIES ---
 
     // --- GAME STATE ---
 
-    GameState gameState = new TitleGameState();
+    GameState gameState = new PlayGameState();
 
     // --- END OF GAME STATE ---
 
@@ -74,7 +78,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         objects = assetSetter.setObjects();
         npcs = assetSetter.setNPC();
-        // playMusic(0);
+
+        collidablesToRender.add(player);
+        collidablesToRender.addAll(npcs);
+        collidablesToRender.addAll(objects);
     }
 
     public void startGameThread() {
@@ -157,15 +164,11 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintGame(Graphics2D g2) {
 
         tileManager.draw(g2);
-        for (GameObject object : objects) {
-            object.draw(g2, this);
-        }
 
-        for (Entity npc : npcs) {
-            npc.draw(g2);
+        collidablesToRender.sort(Comparator.comparingInt(o -> o.worldY));
+        for (Collidable collidable : collidablesToRender) {
+            collidable.draw(g2);
         }
-
-        player.draw(g2);
 
         ui.draw(g2);
     }

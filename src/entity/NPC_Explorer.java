@@ -10,6 +10,7 @@ public class NPC_Explorer extends Entity {
     }
 
     public void setDefaultValues() {
+        super.setDefaultValues();
         direction = "down";
         speed = 1;
     }
@@ -27,7 +28,7 @@ public class NPC_Explorer extends Entity {
 
     public void setDialogue() {
         dialogue.add("Hello, lad.");
-        dialogue.add("So, you've come to this island to find the treasure?");
+        dialogue.add("So, you've come to this island to \nfind the treasure?");
         dialogue.add("I'm still looking for it myself.\nI'll race you to it!");
         dialogue.add("Well, good luck with your hunt...");
     }
