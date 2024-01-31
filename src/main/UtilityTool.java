@@ -14,4 +14,9 @@ public class UtilityTool {
 
         return scaledImage;
     }
+
+    public int getXForCenteredText(String text, Graphics2D g2, int screenWidth) {
+        int textLenght = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+        return (screenWidth - textLenght) / 2;
+    }
 }

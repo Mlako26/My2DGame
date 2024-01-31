@@ -127,4 +127,16 @@ public class UserInterface {
     public void updateDialogue(String newDialogue) {
         this.currentDialogue = newDialogue;
     }
+
+    public void goUpOneOptionInTitleScreen() {
+        titleScreenDrawer.goUpOneOptionInTitleScreen();
+    }
+
+    public void goDownOneOptionInTitleScreen() {
+       titleScreenDrawer.goDownOneOptionInTitleScreen();
+    }
+
+    public void enterPressedInTitleScreen() {
+        titleScreenDrawer.enterPressedInTitleScreen();
+    }
 }

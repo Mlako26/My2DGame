@@ -237,6 +237,18 @@ public class GamePanel extends JPanel implements Runnable {
         gameState = new PlayGameState();
     }
 
+    public void goUpOneOptionInTitleScreen() {
+        ui.goUpOneOptionInTitleScreen();
+    }
+
+    public void goDownOneOptionInTitleScreen() {
+        ui.goDownOneOptionInTitleScreen();
+    }
+
+    public void enterPressedInTitleScreen() {
+        ui.enterPressedInTitleScreen();
+    }
+
 }
 
 

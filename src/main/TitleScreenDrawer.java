@@ -1,17 +1,23 @@
 package main;
 
 import javax.imageio.ImageIO;
+
+import state.PlayGameState;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
 public class TitleScreenDrawer {
-    Graphics2D g2;
     GamePanel gp;
-    int titleScreenPage = 0;
+    UtilityTool uTool = new UtilityTool();
+    Graphics2D g2;
 
-    public TitleScreenDrawer( GamePanel gp) {
+    int titleScreenPage = 0;
+    int command = 0;
+
+    public TitleScreenDrawer(GamePanel gp) {
         this.gp = gp;
     }
 
@@ -35,7 +41,7 @@ public class TitleScreenDrawer {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
 
         String text = "NEW GAME";
-        int x = getXForCenteredText(text);
+        int x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         int y = (int) (gp.tileSize * 8.5);
         g2.drawString(text, x, y);
         if (command == 0) {
@@ -43,7 +49,7 @@ public class TitleScreenDrawer {
         }
 
         text = "LOAD GAME";
-        x = getXForCenteredText(text);
+        x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         y += gp.tileSize;
         g2.drawString(text, x, y);
         if (command == 1) {
@@ -51,7 +57,7 @@ public class TitleScreenDrawer {
         }
 
         text = "QUIT";
-        x = getXForCenteredText(text);
+        x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         y += gp.tileSize;
         g2.drawString(text, x, y);
         if (command == 2) {
@@ -80,7 +86,7 @@ public class TitleScreenDrawer {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
 
         String text = "Simple RPG Game";
-        int x = getXForCenteredText(text);
+        int x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         int y = 3 * gp.tileSize;
 
         // Draws Shadows
@@ -107,12 +113,12 @@ public class TitleScreenDrawer {
         g2.setFont(g2.getFont().deriveFont(42F));
 
         String text = "Select your class!";
-        int x = getXForCenteredText(text);
+        int x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         int y = gp.tileSize * 3;
         g2.drawString(text, x, y);
 
         text = "Fighter";
-        x = getXForCenteredText(text);
+        x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         y += gp.tileSize * 2;
         g2.drawString(text, x ,y);
         if (command == 0) {
@@ -120,7 +126,7 @@ public class TitleScreenDrawer {
         }
 
         text = "Thief";
-        x = getXForCenteredText(text);
+        x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         y += gp.tileSize;
         g2.drawString(text, x ,y);
         if (command == 1) {
@@ -128,7 +134,7 @@ public class TitleScreenDrawer {
         }
 
         text = "Mage";
-        x = getXForCenteredText(text);
+        x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         y += gp.tileSize;
         g2.drawString(text, x ,y);
         if (command == 2) {
@@ -136,7 +142,7 @@ public class TitleScreenDrawer {
         }
 
         text = "Return";
-        x = getXForCenteredText(text);
+        x = uTool.getXForCenteredText(text, g2, gp.screenWidth);
         y += gp.tileSize * 2;
         g2.drawString(text, x ,y);
         if (command == 3) {
@@ -144,4 +150,47 @@ public class TitleScreenDrawer {
         }
     }
 
+    public void goUpOneOptionInTitleScreen() {
+        if (titleScreenPage == 0) {
+            command = (((command - 1) % 3) + 3) % 3;
+        } else if (titleScreenPage == 1) {
+            command = (((command - 1) % 4) + 4) % 4;
+        }
+    }
+
+    public void goDownOneOptionInTitleScreen() {
+        if (titleScreenPage == 0) {
+            command = (command + 1) % 3;
+        } else if (titleScreenPage == 1) {
+            command = (command + 1) % 4;
+        }
+    }
+
+    public void enterPressedInTitleScreen() {
+        if (titleScreenPage == 0) {
+            switch (command) {
+                case 0:
+                    titleScreenPage = 1;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    System.exit(0);
+            }
+        } else if (titleScreenPage == 1) {
+            switch (command) {
+                case 0:
+                case 1:
+                case 2:
+                    gp.gameState = new PlayGameState();
+                    gp.playMusic(0);
+                    break;
+                case 3:
+                    titleScreenPage = 0;
+                    command = 0;
+                    break;
+            }
+        }
+        
+    }
 }
