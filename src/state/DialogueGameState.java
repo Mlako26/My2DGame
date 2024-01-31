@@ -1,6 +1,7 @@
 package state;
 
 import main.GamePanel;
+import main.KeyHandler;
 import main.UserInterface;
 
 import java.awt.*;
@@ -18,12 +19,12 @@ public class DialogueGameState implements GameState {
     }
 
     @Override
-    public GameState changePausedState() {
-        return new PlayGameState();
+    public void whatShouldIPaint(GamePanel gp, Graphics2D g2) {
+        gp.paintGame(g2);
     }
 
     @Override
-    public void whatShouldIPaint(GamePanel gp, Graphics2D g2) {
-        gp.paintGame(g2);
+    public void updateKeyHandler(KeyHandler keyH) {
+        keyH.keyPressedOnDialogueState();
     }
 }

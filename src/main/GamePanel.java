@@ -200,10 +200,6 @@ public class GamePanel extends JPanel implements Runnable {
         soundEffect.play();
     }
 
-    public void changePausedState() {
-        gameState = gameState.changePausedState();
-    }
-
     public void updateInterface() {
         gameState.updateInterface(ui);
     }
@@ -227,6 +223,18 @@ public class GamePanel extends JPanel implements Runnable {
     public void playerInteractedWithNPC(int npcIndex) {
         gameState = new DialogueGameState();
         ui.updateDialogue(npcs.get(npcIndex).speak());
+    }
+
+    public void updateKeyHandlerState() {
+        gameState.updateKeyHandler(keyH);
+    }
+
+    public void pauseGame() {
+        gameState = new PauseGameState();
+    }
+
+    public void resumeGame() {
+        gameState = new PlayGameState();
     }
 
 }
