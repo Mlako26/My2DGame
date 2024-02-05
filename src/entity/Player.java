@@ -16,6 +16,8 @@ public class Player extends Entity {
     public static final int startingCol = 25;
     public static final int startingRow = 42;
 
+    public int invincibleCounter = 0;
+
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp, startingCol, startingRow);
         this.keyH = keyH;
@@ -27,7 +29,6 @@ public class Player extends Entity {
     public void setDefaultValues() {
         super.setDefaultValues();
         speed = 4;
-        direction = "down";
         maxLife = 6;
         life = maxLife;
     }
@@ -45,13 +46,22 @@ public class Player extends Entity {
 
     public void draw(Graphics2D g2) {
         BufferedImage image = nextImage();
+
+        if (isInvincible()) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        }
+
         g2.drawImage(image, screenX, screenY, null);
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+
     }
 
 
     public void update() {
-        if (keyH.anyKeyIsPressed()) {
+        if (invincibleCounter > 0) invincibleCounter--;
 
+        if (keyH.anyKeyIsPressed()) {
             updateAllCollisions();
 
             if (keyH.upPressed) {
@@ -91,22 +101,33 @@ public class Player extends Entity {
 
         int npcIndex = gp.updateNPCCollisionsFor(this);
         interactWithNPC(npcIndex);
+
+        int monsterIndex = gp.updateMonsterCollisionsFor(this);
+        interactWithMonster(monsterIndex);
     }
 
     public void pickUpObject(int i) {
-        if (i == -1) {
-            return;
-        }
+        if (i == -1) return;
     }
 
     public void interactWithNPC(int npcIndex) {
-        if (npcIndex == -1) {
-            return;
-        }
+        if (npcIndex == -1) return;
 
         if (gp.keyH.interactPressed) {
             gp.playerInteractedWithNPC(npcIndex);
             gp.keyH.interactPressed = false;
         }
+    }
+
+    public void interactWithMonster(int monsterIndex) {
+        if (monsterIndex == -1) return;
+        if (invincibleCounter == 0) {
+            life--;
+            invincibleCounter = 60;
+        }
+    }
+
+    public boolean isInvincible() {
+        return invincibleCounter > 0;
     }
 }

@@ -8,6 +8,7 @@ public abstract class Collidable {
     public GamePanel gp;
 
     public int worldX, worldY;
+    public String name;
 
     public boolean collisionOn;
     public Rectangle solidArea;

@@ -57,13 +57,14 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, keyH);
     public ArrayList<GameObject> objects = new ArrayList<>();
     public ArrayList<Entity> npcs = new ArrayList<>();
+    public ArrayList<Entity> monsters = new ArrayList<>();
     public ArrayList<Collidable> collidablesToRender = new ArrayList<>();
 
     // --- END OF ENTITIES ---
 
     // --- GAME STATE ---
 
-    GameState gameState = new PlayGameState();
+    GameState gameState = new TitleGameState();
 
     // --- END OF GAME STATE ---
 
@@ -78,10 +79,12 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         objects = assetSetter.setObjects();
         npcs = assetSetter.setNPC();
+        monsters = assetSetter.setMonsters();
 
         collidablesToRender.add(player);
         collidablesToRender.addAll(npcs);
         collidablesToRender.addAll(objects);
+        collidablesToRender.addAll(monsters);
     }
 
     public void startGameThread() {
@@ -131,6 +134,9 @@ public class GamePanel extends JPanel implements Runnable {
         player.update();
         for (Entity npc : npcs) {
             npc.update();
+        }
+        for (Entity monster : monsters) {
+            monster.update();
         }
     }
 
@@ -208,16 +214,20 @@ public class GamePanel extends JPanel implements Runnable {
         collisionDetector.updateTileCollisionsFor(entity);
     }
 
+    public boolean updatePlayerCollisionFor(Entity entity) {
+        return collisionDetector.updateCollisionWithPlayerFor(entity) != -1;
+    }
+
     public int updateNPCCollisionsFor(Entity entity) {
         return collisionDetector.updateCollisionsFor(entity, npcs);
     }
 
-    public void updatePlayerCollisionFor(Entity entity) {
-        collisionDetector.updateCollisionWithPlayerFor(entity);
-    }
-
     public int updateObjectCollisionsFor(Entity entity) {
         return collisionDetector.updateCollisionsFor(entity, objects);
+    }
+
+    public int updateMonsterCollisionsFor(Entity entity) {
+        return collisionDetector.updateCollisionsFor(entity, monsters);
     }
 
     public void playerInteractedWithNPC(int npcIndex) {

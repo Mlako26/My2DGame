@@ -42,14 +42,17 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D) {
             rightPressed = false;
         }
+        if (code == KeyEvent.VK_E) {
+            interactPressed = false;
+        }
     }
 
     public boolean anyKeyIsPressed() {
-        return upPressed || downPressed || leftPressed || rightPressed;
+        return upPressed || downPressed || leftPressed || rightPressed || interactPressed;
     }
 
     public void keyPressedOnDialogueState() {
-        if (code == KeyEvent.VK_ENTER) {
+        if (code == KeyEvent.VK_E) {
             gp.gameState = new PlayGameState();
         }
     }

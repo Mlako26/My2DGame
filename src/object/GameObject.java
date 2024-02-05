@@ -12,7 +12,6 @@ import java.util.Objects;
 
 public class GameObject extends Collidable {
     public BufferedImage image;
-    public String name;
     public int worldX, worldY;
     public UtilityTool utilities = new UtilityTool();
 
