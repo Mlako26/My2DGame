@@ -63,6 +63,8 @@ public class Entity extends Collidable {
     }
 
     public void setDefaultValues() {
+        direction = "down";
+
         int hitBoxSize = 28;
         solidArea = new Rectangle(8, 16, hitBoxSize, hitBoxSize);
         solidAreaDefaultX = solidArea.x;
@@ -97,7 +99,11 @@ public class Entity extends Collidable {
         resetCollisions();
 
         gp.updateTileCollisionsFor(this);
-        gp.updatePlayerCollisionFor(this);
+        gp.updateMonsterCollisionsFor(this);
+        gp.updateNPCCollisionsFor(this);
+        if (gp.updatePlayerCollisionFor(this)) {
+            collidedWithPlayer();
+        }
 
         if (direction.equals("up") && !topCollisionOn) {
             worldY -= speed;
@@ -200,5 +206,9 @@ public class Entity extends Collidable {
                 direction = "left";
                 break;
         }
+    }
+
+    public void collidedWithPlayer() {
+
     }
 }

@@ -2,8 +2,10 @@ package main;
 
 import entity.Entity;
 import entity.NPC_Explorer;
+import monster.MON_GreenSlime;
 import object.GameObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AssetSetter {
@@ -23,5 +25,13 @@ public class AssetSetter {
         npcs.add(new NPC_Explorer(gp, 28, 42));
 
         return npcs;
+    }
+
+    public ArrayList<Entity> setMonsters() {
+        ArrayList<Entity> monsters = new ArrayList<>();
+
+        monsters.add(new MON_GreenSlime(gp, 38, 37));
+
+        return monsters;
     }
 }

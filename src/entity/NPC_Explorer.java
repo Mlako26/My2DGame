@@ -11,7 +11,6 @@ public class NPC_Explorer extends Entity {
 
     public void setDefaultValues() {
         super.setDefaultValues();
-        direction = "down";
         speed = 1;
     }
 

@@ -107,6 +107,9 @@ public class CollisionDetector {
         entity.solidArea.y += entity.worldY;
         for (int i = 0; i < collidablesToCheck.size(); i++) {
             Collidable collidableThing = collidablesToCheck.get(i);
+
+            if (collidableThing == entity) continue;
+
             collidableThing.solidArea.x = collidableThing.worldX + collidableThing.solidArea.x;
             collidableThing.solidArea.y = collidableThing.worldY + collidableThing.solidArea.y;
 
@@ -160,10 +163,10 @@ public class CollisionDetector {
         return index;
     }
 
-    public void updateCollisionWithPlayerFor(Entity entity) {
+    public int updateCollisionWithPlayerFor(Entity entity) {
         ArrayList<Collidable> playerArray = new ArrayList<>();
         playerArray.add(gp.player);
-        updateCollisionsFor(entity, playerArray);
+        return updateCollisionsFor(entity, playerArray);
     }
 
 }
