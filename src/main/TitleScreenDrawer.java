@@ -30,8 +30,6 @@ public class TitleScreenDrawer implements ActionListener {
         int delay = 100;  // Milliseconds between repaints
         Timer timer = new Timer(delay, this);
         timer.start();
-
-        gp.playMusic(5);
     }
 
     public void draw(Graphics2D g2) {

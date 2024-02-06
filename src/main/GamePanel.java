@@ -84,8 +84,6 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
-
-
     }
 
     @Override
@@ -128,11 +126,18 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void updateOnPlayState() {
         player.update();
+
+        ArrayList<Integer> deadMonsters = new ArrayList<>();
         for (Entity npc : npcs) {
             npc.update();
         }
-        for (Entity monster : monsters) {
-            monster.update();
+        for (int i = 0; i < monsters.size(); i++) {
+            Entity monster = monsters.get(i);
+            if (monster.isDead()) deadMonsters.add(i);
+            else monster.update();
+        }
+        for (int i : deadMonsters) {
+            monsters.remove(i);
         }
     }
 
@@ -273,9 +278,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void attackMonster(int monsterIndex) {
         monsters.get(monsterIndex).takeHit();
-        if (monsters.get(monsterIndex).isDead()) {
-            monsters.remove(monsterIndex);
-        }
     }
 }
 

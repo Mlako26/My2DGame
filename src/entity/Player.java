@@ -199,6 +199,7 @@ public class Player extends Entity {
     public void interactWithMonster(int monsterIndex) {
         if (monsterIndex == -1) return;
         if (invincibleCounter == 0) {
+            gp.playSoundEffect(8);
             life--;
             invincibleCounter = 60;
         }
@@ -206,5 +207,6 @@ public class Player extends Entity {
 
     public void startAttack() {
         attacking = true;
+        gp.playSoundEffect(6);
     }
 }

@@ -35,9 +35,18 @@ public class MON_GreenSlime extends Entity {
         right1 = up1;
         right2 = up2;
     }
+    public void takeHit() {
+        super.takeHit();
+        reactToGettingHit();
+    }
 
     public void collidedWithPlayer() {
         gp.player.interactWithMonster(0);
+    }
+
+    public void reactToGettingHit() {
+        actionLockCounter = 0;
+        direction = gp.player.direction;
     }
 
 }

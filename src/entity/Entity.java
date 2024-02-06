@@ -26,6 +26,7 @@ public class Entity extends Collidable {
     public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     public int spriteCounter = 0;
     public int spriteNum = 1;
+    public final int deathAnimationFrameCount = 40;
     public int actionLockCounter = 0;
 
     // --- END SPRITES ---
@@ -50,10 +51,12 @@ public class Entity extends Collidable {
 
     // --- CHARACTER STATUS ---
 
-    public int maxLife;
-    public int life;
+    public int maxLife = 4;
+    public int life = 4;
+    int showHPBarCounter = 0;
     public boolean attacking;
     public int invincibleCounter = 0;
+    int dyingCounter = 0;
 
     // --- END OF CHARACTER STATUS ---
 
@@ -96,16 +99,48 @@ public class Entity extends Collidable {
         int screenY = gp.getScreenY(worldY);
 
         if (tileIsWithinBounds(gp, screenX, screenY)) {
-            BufferedImage image = nextImage();
+            drawHPBar(g2, screenX, screenY);
+            drawEntity(g2, screenX, screenY);
+        }
+    }
 
-            if (isInvincible()) {
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F));
-            }
+    private void drawEntity(Graphics2D g2, int screenX, int screenY) {
+        BufferedImage image = nextImage();
 
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        if (isInvincible()) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F));
+        }
 
+        if (isDying()) {
+            dyingAnimation(g2);
+        }
+        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+    }
+
+    private void drawHPBar(Graphics2D g2, int screenX, int screenY) {
+        if (showHPBarCounter > 0) {
+            showHPBarCounter--;
+            g2.setColor(new Color(35,35,35));
+            g2.fillRect(screenX-2, screenY - 17, gp.tileSize + 4, 14);
+            g2.setColor(new Color(255,0,30));
+            g2.fillRect(screenX, screenY - 15, (gp.tileSize / maxLife) * life, 10);
+        }
+    }
+
+    private void dyingAnimation(Graphics2D g2) {
+        if (dyingCounter > deathAnimationFrameCount) {
+            return;
+        }
+
+        if ((dyingCounter % 10) <= 4) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0F));
+        } else {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
         }
+
+        dyingCounter++;
     }
 
     public void update() {
@@ -254,15 +289,29 @@ public class Entity extends Collidable {
         if (isInvincible()) {
             return;
         }
-        resetInvincibleCounter();
+        gp.playSoundEffect(7);
         life--;
+        if (isAlive()) resetInvincibleCounter();
+        resetHPBarCounter();
+    }
+
+    private void resetHPBarCounter() {
+        showHPBarCounter = 600;
     }
 
     private void resetInvincibleCounter() {
         invincibleCounter = 40;
     }
 
-    public boolean isDead() {
+    protected boolean isDying() {
         return life == 0;
+    }
+
+    public boolean isDead() {
+        return life == 0 && dyingCounter > deathAnimationFrameCount;
+    }
+
+    public boolean isAlive() {
+        return !isDead();
     }
 }
