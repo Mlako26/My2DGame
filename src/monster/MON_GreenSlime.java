@@ -26,8 +26,8 @@ public class MON_GreenSlime extends Entity {
     }
 
     public void getImages() {
-        up1 = setup("/monster/greenSlime_down1");
-        up2 = setup("/monster/greenSlime_down2");
+        up1 = setup("/monster/greenSlime_down1", gp.tileSize, gp.tileSize);
+        up2 = setup("/monster/greenSlime_down2", gp.tileSize, gp.tileSize);
         down1 = up1;
         down2 = up2;
         left1 = up1;

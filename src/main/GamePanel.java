@@ -58,13 +58,12 @@ public class GamePanel extends JPanel implements Runnable {
     public ArrayList<GameObject> objects = new ArrayList<>();
     public ArrayList<Entity> npcs = new ArrayList<>();
     public ArrayList<Entity> monsters = new ArrayList<>();
-    public ArrayList<Collidable> collidablesToRender = new ArrayList<>();
 
     // --- END OF ENTITIES ---
 
     // --- GAME STATE ---
 
-    GameState gameState = new TitleGameState();
+    GameState gameState = new PlayGameState();
 
     // --- END OF GAME STATE ---
 
@@ -80,16 +79,13 @@ public class GamePanel extends JPanel implements Runnable {
         objects = assetSetter.setObjects();
         npcs = assetSetter.setNPC();
         monsters = assetSetter.setMonsters();
-
-        collidablesToRender.add(player);
-        collidablesToRender.addAll(npcs);
-        collidablesToRender.addAll(objects);
-        collidablesToRender.addAll(monsters);
     }
 
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
+
+
     }
 
     @Override
@@ -171,12 +167,24 @@ public class GamePanel extends JPanel implements Runnable {
 
         tileManager.draw(g2);
 
-        collidablesToRender.sort(Comparator.comparingInt(o -> o.worldY));
+        ArrayList<Collidable> collidablesToRender = setCollidables();
         for (Collidable collidable : collidablesToRender) {
             collidable.draw(g2);
         }
 
         ui.draw(g2);
+    }
+
+    private ArrayList<Collidable> setCollidables() {
+        ArrayList<Collidable> collidablesToRender = new ArrayList<>();
+
+        collidablesToRender.add(player);
+        collidablesToRender.addAll(npcs);
+        collidablesToRender.addAll(objects);
+        collidablesToRender.addAll(monsters);
+        collidablesToRender.sort(Comparator.comparingInt(o -> o.worldY));
+
+        return collidablesToRender;
     }
 
     public int getScreenY(int worldY) {
@@ -259,6 +267,16 @@ public class GamePanel extends JPanel implements Runnable {
         ui.enterPressedInTitleScreen();
     }
 
+    public void actionKeyWasPressed() {
+        player.startAttack();
+    }
+
+    public void attackMonster(int monsterIndex) {
+        monsters.get(monsterIndex).takeHit();
+        if (monsters.get(monsterIndex).isDead()) {
+            monsters.remove(monsterIndex);
+        }
+    }
 }
 
 

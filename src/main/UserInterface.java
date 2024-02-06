@@ -2,12 +2,10 @@ package main;
 
 import object.OBJ_Heart;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 
 public class UserInterface {
 
@@ -32,7 +30,7 @@ public class UserInterface {
             throw new RuntimeException(e);
         }
 
-        OBJ_Heart heart = new OBJ_Heart(gp, 0,0);
+        OBJ_Heart heart = new OBJ_Heart(gp, 0, 0);
         heartFull = heart.image;
         heartHalf = heart.image2;
         heartEmpty = heart.image3;

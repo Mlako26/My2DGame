@@ -23,6 +23,7 @@ public class Entity extends Collidable {
     // --- SPRITES ---
 
     public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
+    public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     public int spriteCounter = 0;
     public int spriteNum = 1;
     public int actionLockCounter = 0;
@@ -35,6 +36,8 @@ public class Entity extends Collidable {
     public boolean bottomCollisionOn = false;
     public boolean leftCollisionOn = false;
     public boolean rightCollisionOn = false;
+
+    public Rectangle attackArea = new Rectangle(0,0,0,0);
 
     // --- END OF COLLISION ---
 
@@ -49,6 +52,8 @@ public class Entity extends Collidable {
 
     public int maxLife;
     public int life;
+    public boolean attacking;
+    public int invincibleCounter = 0;
 
     // --- END OF CHARACTER STATUS ---
 
@@ -71,25 +76,35 @@ public class Entity extends Collidable {
         solidAreaDefaultY = solidArea.y;
     }
 
-    public BufferedImage setup(String imagePath) {
+    public BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool tool = new UtilityTool();
         BufferedImage scaledImage = null;
         try {
             BufferedImage original = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
-            scaledImage = tool.scaleImage(original, gp.tileSize, gp.tileSize);
+            scaledImage = tool.scaleImage(original, width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return scaledImage;
     }
 
+    public boolean isInvincible() {
+        return invincibleCounter > 0;
+    }
     public void draw(Graphics2D g2) {
         int screenX = gp.getScreenX(worldX);
         int screenY = gp.getScreenY(worldY);
 
         if (tileIsWithinBounds(gp, screenX, screenY)) {
             BufferedImage image = nextImage();
+
+            if (isInvincible()) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F));
+            }
+
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
         }
     }
 
@@ -119,6 +134,8 @@ public class Entity extends Collidable {
     }
 
     public void updateSpriteCounter() {
+        if (invincibleCounter > 0) invincibleCounter--;
+
         spriteCounter++;
         if (spriteCounter > 12) {
             if (spriteNum == 1) {
@@ -133,22 +150,43 @@ public class Entity extends Collidable {
 
     public BufferedImage nextImage() {
         BufferedImage image = null;
+
         switch (direction) {
             case "up":
-                if (spriteNum == 1) image = up1;
-                else image = up2;
+                if (attacking) {
+                    if (spriteNum == 1) image = attackUp1;
+                    else image = attackUp2;
+                } else {
+                    if (spriteNum == 1) image = up1;
+                    else image = up2;
+                }
                 break;
             case "down":
-                if (spriteNum == 1) image = down1;
-                else image = down2;
+                if (attacking) {
+                    if (spriteNum == 1) image = attackDown1;
+                    else image = attackDown2;
+                } else {
+                    if (spriteNum == 1) image = down1;
+                    else image = down2;
+                }
                 break;
             case "right":
-                if (spriteNum == 1) image = right1;
-                else image = right2;
+                if (attacking) {
+                    if (spriteNum == 1) image = attackRight1;
+                    else image = attackRight2;
+                } else {
+                    if (spriteNum == 1) image = right1;
+                    else image = right2;
+                }
                 break;
             case "left":
-                if (spriteNum == 1) image = left1;
-                else image = left2;
+                if (attacking) {
+                    if (spriteNum == 1) image = attackLeft1;
+                    else image = attackLeft2;
+                } else {
+                    if (spriteNum == 1) image = left1;
+                    else image = left2;
+                }
                 break;
         }
         return image;
@@ -210,5 +248,21 @@ public class Entity extends Collidable {
 
     public void collidedWithPlayer() {
 
+    }
+
+    public void takeHit() {
+        if (isInvincible()) {
+            return;
+        }
+        resetInvincibleCounter();
+        life--;
+    }
+
+    private void resetInvincibleCounter() {
+        invincibleCounter = 40;
+    }
+
+    public boolean isDead() {
+        return life == 0;
     }
 }

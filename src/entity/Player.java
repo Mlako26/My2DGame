@@ -16,7 +16,6 @@ public class Player extends Entity {
     public static final int startingCol = 25;
     public static final int startingRow = 42;
 
-    public int invincibleCounter = 0;
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp, startingCol, startingRow);
@@ -24,6 +23,8 @@ public class Player extends Entity {
 
         screenX = gp.screenWidth/2 - gp.tileSize / 2;
         screenY = gp.screenHeight/2 - gp.tileSize / 2;
+
+        getPlayerAttackImages();
     }
 
     public void setDefaultValues() {
@@ -31,17 +32,31 @@ public class Player extends Entity {
         speed = 4;
         maxLife = 6;
         life = maxLife;
+
+        attackArea.width = 36;
+        attackArea.height = 36;
     }
 
     public void getEntityImages() {
-        up1 = setup("/player/up1");
-        up2 = setup("/player/up2");
-        down1 = setup("/player/down1");
-        down2 = setup("/player/down2");
-        left1 = setup("/player/left1");
-        left2 = setup("/player/left2");
-        right1 = setup("/player/right1");
-        right2 = setup("/player/right2");
+        up1 = setup("/player/up1", gp.tileSize, gp.tileSize);
+        up2 = setup("/player/up2", gp.tileSize, gp.tileSize);
+        down1 = setup("/player/down1", gp.tileSize, gp.tileSize);
+        down2 = setup("/player/down2", gp.tileSize, gp.tileSize);
+        left1 = setup("/player/left1", gp.tileSize, gp.tileSize);
+        left2 = setup("/player/left2", gp.tileSize, gp.tileSize);
+        right1 = setup("/player/right1", gp.tileSize, gp.tileSize);
+        right2 = setup("/player/right2", gp.tileSize, gp.tileSize);
+    }
+
+    public void getPlayerAttackImages() {
+        attackUp1 = setup("/player/attack/player_attack_up1", gp.tileSize, gp.tileSize * 2);
+        attackUp2 = setup("/player/attack/player_attack_up2", gp.tileSize, gp.tileSize * 2);
+        attackDown1 = setup("/player/attack/player_attack_down1", gp.tileSize, gp.tileSize * 2);
+        attackDown2 = setup("/player/attack/player_attack_down2", gp.tileSize, gp.tileSize * 2);
+        attackLeft1 = setup("/player/attack/player_attack_left1", gp.tileSize * 2, gp.tileSize);
+        attackLeft2 = setup("/player/attack/player_attack_left2", gp.tileSize * 2, gp.tileSize);
+        attackRight1 = setup("/player/attack/player_attack_right1", gp.tileSize * 2, gp.tileSize);
+        attackRight2 = setup("/player/attack/player_attack_right2", gp.tileSize * 2, gp.tileSize);
     }
 
     public void draw(Graphics2D g2) {
@@ -50,8 +65,18 @@ public class Player extends Entity {
         if (isInvincible()) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
         }
+        int temporaryScreenX = screenX;
+        int temporaryScreenY = screenY;
 
-        g2.drawImage(image, screenX, screenY, null);
+        if (attacking) {
+            if (direction.equals("up")) {
+                temporaryScreenY -= gp.tileSize;
+            } else if (direction.equals("left")) {
+                temporaryScreenX -= gp.tileSize;
+            }
+        }
+
+        g2.drawImage(image, temporaryScreenX, temporaryScreenY, null);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
@@ -61,35 +86,87 @@ public class Player extends Entity {
     public void update() {
         if (invincibleCounter > 0) invincibleCounter--;
 
-        if (keyH.anyKeyIsPressed()) {
-            updateAllCollisions();
-
-            if (keyH.upPressed) {
-                direction = "up";
-                if (!topCollisionOn) worldY -= speed;
-            }
-
-            if (keyH.downPressed) {
-                direction = "down";
-                if (!bottomCollisionOn) worldY += speed;
-            }
-
-            if (keyH.leftPressed) {
-                direction = "left";
-                if (!leftCollisionOn) worldX -= speed;
-            }
-
-            if (keyH.rightPressed) {
-                direction = "right";
-                if (!rightCollisionOn) worldX += speed;
-            }
-            updateSpriteCounter();
-
-            gp.eventHandler.checkEvent();
+        if (attacking) {
+            updateOnAttack();
+        } else if (keyH.anyKeyIsPressed()) {
+            updateOnMovement();
         } else {
             spriteNum = 1;
         }
     }
+
+    private void updateOnMovement() {
+        updateAllCollisions();
+
+        if (keyH.upPressed) {
+            direction = "up";
+            if (!topCollisionOn) worldY -= speed;
+        }
+
+        if (keyH.downPressed) {
+            direction = "down";
+            if (!bottomCollisionOn) worldY += speed;
+        }
+
+        if (keyH.leftPressed) {
+            direction = "left";
+            if (!leftCollisionOn) worldX -= speed;
+        }
+
+        if (keyH.rightPressed) {
+            direction = "right";
+            if (!rightCollisionOn) worldX += speed;
+        }
+        updateSpriteCounter();
+
+        gp.eventHandler.checkEvent();
+    }
+
+    private void updateOnAttack() {
+        spriteCounter++;
+
+        if (spriteCounter <= 10) {
+            spriteNum = 1;
+        } else if (spriteCounter <= 25) {
+            spriteNum = 2;
+            checkAttackCollision();
+        } else {
+            spriteNum = 1;
+            spriteCounter = 0;
+            attacking = false;
+        }
+    }
+
+    private void checkAttackCollision() {
+        // Save current player values
+        int currentWorldX = worldX;
+        int currentWorldY = worldY;
+        int solidAreaWidth = solidArea.width;
+        int solidAreaHeight = solidArea.height;
+
+        // Change players hit-box to match the weapon's
+        switch(direction) {
+            case "up": worldY -= attackArea.height; break;
+            case "down": worldY += attackArea.height; break;
+            case "left": worldX -= attackArea.width; break;
+            case "right": worldX += attackArea.width; break;
+        }
+        solidArea.width = attackArea.width;
+        solidArea.height = attackArea.height;
+
+        int monsterIndex = gp.updateMonsterCollisionsFor(this);
+
+        // Reset values
+        worldX = currentWorldX;
+        worldY = currentWorldY;
+        solidArea.width = solidAreaWidth;
+        solidArea.height = solidAreaHeight;
+
+        if (monsterIndex != -1) {
+            gp.attackMonster(monsterIndex);
+        }
+    }
+
 
     private void updateAllCollisions() {
         resetCollisions();
@@ -127,7 +204,7 @@ public class Player extends Entity {
         }
     }
 
-    public boolean isInvincible() {
-        return invincibleCounter > 0;
+    public void startAttack() {
+        attacking = true;
     }
 }

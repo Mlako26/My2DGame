@@ -1,15 +1,16 @@
 package main;
 
-import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import state.PlayGameState;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import java.util.Objects;
 
-public class TitleScreenDrawer {
+public class TitleScreenDrawer implements ActionListener {
     GamePanel gp;
     UtilityTool uTool = new UtilityTool();
     Graphics2D g2;
@@ -17,12 +18,25 @@ public class TitleScreenDrawer {
     int titleScreenPage = 0;
     int command = 0;
 
+    private final ImageIcon animatedGif;
+
     public TitleScreenDrawer(GamePanel gp) {
         this.gp = gp;
+
+        // Load the animated GIF (replace "your_animation.gif" with the actual path to your GIF)
+        animatedGif = new ImageIcon(Objects.requireNonNull(getClass().getResource("/titleScreen/background.gif")));
+
+        // Set up Timer to repaint the panel every 100 milliseconds
+        int delay = 100;  // Milliseconds between repaints
+        Timer timer = new Timer(delay, this);
+        timer.start();
+
+        gp.playMusic(5);
     }
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
+        g2.drawImage(animatedGif.getImage(),0,0,gp.screenWidth, gp.screenHeight, gp);
         if (titleScreenPage == 0) {
             drawMenu();
         } else if (titleScreenPage == 1) {
@@ -31,7 +45,7 @@ public class TitleScreenDrawer {
     }
 
     private void drawMenu() {
-        drawTitleBackground();
+       // drawTitleBackground();
         drawGameTitle();
         drawPlayerWithFlowers();
         drawTitleOptions();
@@ -70,16 +84,16 @@ public class TitleScreenDrawer {
         int y = gp.tileSize * 5;
 
         g2.drawImage(gp.player.down1, x, y, gp.tileSize * 2, gp.tileSize * 2, null);
-
-        BufferedImage flower = null;
-        try {
-            flower = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/pinkFlower.png")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        g2.drawImage(flower, x - 3 * gp.tileSize, y, gp.tileSize * 2, gp.tileSize * 2, null);
-        g2.drawImage(flower, x + 3 * gp.tileSize, y, gp.tileSize * 2, gp.tileSize * 2, null);
+//
+//        BufferedImage flower = null;
+//        try {
+//            flower = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/pinkFlower.png")));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        g2.drawImage(flower, x - 3 * gp.tileSize, y, gp.tileSize * 2, gp.tileSize * 2, null);
+//        g2.drawImage(flower, x + 3 * gp.tileSize, y, gp.tileSize * 2, gp.tileSize * 2, null);
     }
 
     private void drawGameTitle() {
@@ -104,7 +118,7 @@ public class TitleScreenDrawer {
     }
 
     private void drawClassSelection() {
-        drawTitleBackground();
+       // drawTitleBackground();
         drawClassOptions();
     }
 
@@ -183,6 +197,7 @@ public class TitleScreenDrawer {
                 case 1:
                 case 2:
                     gp.gameState = new PlayGameState();
+                    gp.stopMusic();
                     gp.playMusic(0);
                     break;
                 case 3:
@@ -192,5 +207,10 @@ public class TitleScreenDrawer {
             }
         }
         
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        gp.repaint();
     }
 }

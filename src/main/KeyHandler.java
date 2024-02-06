@@ -76,6 +76,9 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ESCAPE) {
             gp.pauseGame();
         }
+        if (code == KeyEvent.VK_ENTER) {
+            gp.actionKeyWasPressed();
+        }
 
 
         // DEBUG
