@@ -19,6 +19,9 @@ public class Sound {
         soundURL[6] = getClass().getResource("/sounds/swingSword.wav");
         soundURL[7] = getClass().getResource("/sounds/hitmonster.wav");
         soundURL[8] = getClass().getResource("/sounds/receivedamage.wav");
+        soundURL[9] = getClass().getResource("/sounds/powerup.wav");
+        soundURL[10] = getClass().getResource("/sounds/levelup.wav");
+
 
 
     }

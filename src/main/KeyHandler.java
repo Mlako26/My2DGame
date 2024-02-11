@@ -52,7 +52,7 @@ public class KeyHandler implements KeyListener {
     }
 
     public void keyPressedOnDialogueState() {
-        if (code == KeyEvent.VK_E) {
+        if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_E) {
             gp.gameState = new PlayGameState();
         }
     }
@@ -79,6 +79,9 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ENTER) {
             gp.actionKeyWasPressed();
         }
+        if (code == KeyEvent.VK_I) {
+            gp.openInventory();
+        }
 
 
         // DEBUG
@@ -104,6 +107,12 @@ public class KeyHandler implements KeyListener {
 
         if (code == KeyEvent.VK_ENTER) {
             gp.enterPressedInTitleScreen();
+        }
+    }
+
+    public void keyPressedOnCharacterState() {
+        if (code == KeyEvent.VK_I) {
+            gp.resumeGame();
         }
     }
 }

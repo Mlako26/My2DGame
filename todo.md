@@ -10,3 +10,4 @@
 - [x] fix npc shirt
 
 - [] If needed, I can optimize rendering time by not sorting collidables each time, but doing a merging algorithm.
+- [] Refactor Game Panel methods.

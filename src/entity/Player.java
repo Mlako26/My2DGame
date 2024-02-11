@@ -2,6 +2,8 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
+import object.OBJ_Shield_Wood;
+import object.OBJ_Sword_Normal;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -35,6 +37,25 @@ public class Player extends Entity {
 
         attackArea.width = 36;
         attackArea.height = 36;
+
+        level = 1;
+        strength = 1;
+        dexterity = 1;
+        exp = 0;
+        nextLevelExp = 5;
+        coins = 0;
+        currentWeapon = new OBJ_Sword_Normal(gp,0,0,false);
+        currentShield = new OBJ_Shield_Wood(gp,0,0,false);
+        attack = getAttack();
+        defense = getDefense();
+    }
+
+    private int getDefense() {
+        return dexterity * currentShield.defenseValue;
+    }
+
+    private int getAttack() {
+        return strength * currentWeapon.attackValue;
     }
 
     public void getEntityImages() {
@@ -163,7 +184,7 @@ public class Player extends Entity {
         solidArea.height = solidAreaHeight;
 
         if (monsterIndex != -1) {
-            gp.attackMonster(monsterIndex);
+            gp.attackMonster(monsterIndex, attack);
         }
     }
 
@@ -198,9 +219,15 @@ public class Player extends Entity {
 
     public void interactWithMonster(int monsterIndex) {
         if (monsterIndex == -1) return;
+
+        gp.playerInteractedWithMonster(monsterIndex);
+    }
+
+    public void takeHit(int attackDamage) {
         if (invincibleCounter == 0) {
             gp.playSoundEffect(8);
-            life--;
+            int damageTaken = Math.max(attackDamage - defense, 0);
+            life = Math.max(life - damageTaken, 0);
             invincibleCounter = 60;
         }
     }
@@ -208,5 +235,23 @@ public class Player extends Entity {
     public void startAttack() {
         attacking = true;
         gp.playSoundEffect(6);
+    }
+
+    public void gainEXP(int exp) {
+        this.exp += exp;
+        if (this.exp >= nextLevelExp) {
+            gp.playSoundEffect(10);
+
+            level++;
+            nextLevelExp = nextLevelExp * 2 + 10;
+
+            maxLife += 2;
+            strength++;
+            dexterity++;
+            attack = getAttack();
+            defense = getDefense();
+
+            gp.playerLeveledUp(level);
+        }
     }
 }

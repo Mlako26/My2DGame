@@ -15,6 +15,13 @@ public class GameObject extends Collidable {
     public int worldX, worldY;
     public UtilityTool utilities = new UtilityTool();
 
+    // --- ITEM ATTRIBUTES ---
+
+    public int attackValue = 0;
+    public int defenseValue = 0;
+
+    // --- END OF ITEM ATTRIBUTES ---
+
     public GameObject(GamePanel gp, int x, int y, String name, boolean collision) {
         super(gp, x, y, collision);
 

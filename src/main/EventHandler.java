@@ -42,7 +42,6 @@ public class EventHandler {
             eventRectangle[lastEventCol][lastEventRow].eventDone = false;
         }
 
-
         if (hit(25,29, "right")) {
             damagePit(25, 29, new DialogueGameState());
         }
@@ -64,8 +63,6 @@ public class EventHandler {
         if (gp.player.solidArea.intersects(eventRectangle[col][row]) && !eventRectangle[col][row].eventDone) {
             if (gp.player.direction.equals(requiredDirection) || requiredDirection.equals("any")) {
                 hit = true;
-                lastEventCol = col;
-                lastEventRow = row;
             }
         }
 
@@ -79,6 +76,10 @@ public class EventHandler {
     }
 
     public void damagePit(int col, int row, GameState gameState) {
+        lastEventCol = col;
+        lastEventRow = row;
+
+        gp.playSoundEffect(8);
         gp.gameState = gameState;
         gp.ui.currentDialogue = "You fell into a pit!";
         gp.player.life = Math.max(0, gp.player.life - 1);
@@ -87,11 +88,11 @@ public class EventHandler {
 
     public void healingPool(int col, int row, GameState gameState) {
         if (gp.keyH.interactPressed) {
+            gp.playSoundEffect(9);
             gp.gameState = gameState;
             gp.ui.currentDialogue = "You drank the healing water!\nYou recovered a full heart.";
             gp.player.life = Math.min(6, gp.player.life + 2);
             gp.keyH.interactPressed = false;
-            eventRectangle[col][row].eventDone = true;
         }
     }
 }

@@ -7,10 +7,13 @@ public class MON_GreenSlime extends Entity {
     public MON_GreenSlime(GamePanel gp, int worldX, int worldY) {
         super(gp, worldX, worldY);
 
-        name = "green_slime";
+        name = "Green Slime";
         speed = 1;
         maxLife = 4;
         life = maxLife;
+        attack = 5;
+        defense = 0;
+        exp = 5;
 
         setHitBox();
         getImages();
@@ -35,13 +38,16 @@ public class MON_GreenSlime extends Entity {
         right1 = up1;
         right2 = up2;
     }
-    public void takeHit() {
-        super.takeHit();
+    public void takeHit(int attackDamage) {
+        super.takeHit(attackDamage);
+
         reactToGettingHit();
     }
 
     public void collidedWithPlayer() {
-        gp.player.interactWithMonster(0);
+        if (isAlive()) {
+            gp.attackEntity(gp.player, attack);
+        }
     }
 
     public void reactToGettingHit() {

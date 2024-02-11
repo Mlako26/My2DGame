@@ -63,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // --- GAME STATE ---
 
-    GameState gameState = new PlayGameState();
+    GameState gameState = new TitleGameState();
 
     // --- END OF GAME STATE ---
 
@@ -84,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
+        playMusic(5);
     }
 
     @Override
@@ -276,8 +277,32 @@ public class GamePanel extends JPanel implements Runnable {
         player.startAttack();
     }
 
-    public void attackMonster(int monsterIndex) {
-        monsters.get(monsterIndex).takeHit();
+    public void attackMonster(int monsterIndex, int attackDamage) {
+        attackEntity(monsters.get(monsterIndex), attackDamage);
+    }
+
+    public void attackEntity(Entity entity, int attackDamage) {
+        entity.takeHit(attackDamage);
+    }
+
+    public void openInventory() {
+        gameState = new CharacterGameState();
+    }
+
+    public void playerInteractedWithMonster(int monsterIndex) {
+        monsters.get(monsterIndex).collidedWithPlayer();
+    }
+
+
+    public void entityKilled(Entity entity) {
+        ui.addMessage("You killed: " + entity.name + "!");
+        ui.addMessage("Gained " + entity.exp + "EXP");
+        player.gainEXP(entity.exp);
+    }
+
+    public void playerLeveledUp(int level) {
+        ui.currentDialogue = "You reached level " + level + "!\nYou feel stronger...";
+        gameState = new DialogueGameState();
     }
 }
 

@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UserInterface {
 
@@ -14,6 +16,8 @@ public class UserInterface {
     Font defaultFont;
 
     public String currentDialogue = "";
+    ArrayList<String> messages = new ArrayList<>();
+    ArrayList<Integer> messageCounter = new ArrayList<>();
 
     TitleScreenDrawer titleScreenDrawer;
 
@@ -63,13 +67,105 @@ public class UserInterface {
 
     public void drawPlayScreen() {
         drawPlayerLife();
+        drawMessages();
+    }
+
+    public void drawCharacterScreen() {
+        final int frameX = gp.tileSize;
+        final int frameY = gp.tileSize;
+        final int frameWidth = gp.tileSize * 5;
+        final int frameHeight = gp.tileSize * 10;
+
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        g2.setColor(Color.white);
+        g2.setFont(g2.getFont().deriveFont(32F));
+
+        int textX = frameX + 20;
+        int textY = frameY + gp.tileSize;
+        final int lineHeight = 35;
+
+        g2.drawString("Level", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Life", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Strength", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Dexterity", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Attack", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Defense", textX, textY);
+        textY += lineHeight;
+        g2.drawString("EXP", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Next Level", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Coins", textX, textY);
+        textY += lineHeight + 20;
+        g2.drawString("Weapon", textX, textY);
+        textY += lineHeight + 25;
+        g2.drawString("Shield", textX, textY);
+
+        int tailX = frameX + frameWidth - 30;
+
+        textY = frameY + gp.tileSize;
+        String value = String.valueOf(gp.player.level);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.life + "/" + gp.player.maxLife);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.strength);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.dexterity);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.attack);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.defense);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.exp);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.nextLevelExp);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = String.valueOf(gp.player.coins);
+        textX = getXForAligningText(value, tailX);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        g2.drawImage(gp.player.currentWeapon.image, tailX - gp.tileSize, textY-14, null);
+
+        textY += gp.tileSize;
+        g2.drawImage(gp.player.currentShield.image, tailX - gp.tileSize, textY, null);
     }
 
     public void drawDialogueScreen() {
         drawPlayerLife();
 
         // DIALOGUE WINDOW
-        int x = gp.tileSize * 2;
+        int x = gp. tileSize * 2;
         int y = gp.tileSize / 2;
         int width = gp.screenWidth - 4 * gp.tileSize;
         int height = gp.tileSize * 4;
@@ -121,6 +217,10 @@ public class UserInterface {
         int textLenght = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return (gp.screenWidth - textLenght) / 2;
     }
+    public int getXForAligningText(String text, int tailX) {
+        int textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+        return tailX - textLength;
+    }
 
     public void updateDialogue(String newDialogue) {
         this.currentDialogue = newDialogue;
@@ -136,5 +236,38 @@ public class UserInterface {
 
     public void enterPressedInTitleScreen() {
         titleScreenDrawer.enterPressedInTitleScreen();
+    }
+
+    public void addMessage(String text) {
+        messages.add(text);
+        messageCounter.add(0);
+    }
+
+    private void drawMessages() {
+        int messageX = gp.tileSize;
+        int messageY = gp.tileSize * 4;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
+
+        ArrayList<Integer> messagesToRemove = new ArrayList<>();
+        for (int i = 0; i < messages.size(); i++) {
+            g2.setColor(Color.black);
+            g2.drawString(messages.get(i), messageX+2, messageY+2);
+
+            g2.setColor(Color.white);
+            g2.drawString(messages.get(i), messageX, messageY);
+            messageCounter.set(i, messageCounter.get(i) + 1);
+            messageY += 50;
+
+            if (messageCounter.get(i) > 180) {
+                messagesToRemove.add(i);
+            }
+        }
+
+        for (int i : messagesToRemove.reversed()) {
+            messages.remove(i);
+            messageCounter.remove(i);
+        }
+
     }
 }

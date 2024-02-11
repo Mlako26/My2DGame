@@ -3,6 +3,7 @@ package entity;
 import collidable.Collidable;
 import main.GamePanel;
 import main.UtilityTool;
+import object.GameObject;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,6 +28,10 @@ public class Entity extends Collidable {
     public int spriteCounter = 0;
     public int spriteNum = 1;
     public final int deathAnimationFrameCount = 40;
+    int showHPBarCounter = 0;
+    public int invincibleCounter = 0;
+    int dyingCounter = 0;
+
     public int actionLockCounter = 0;
 
     // --- END SPRITES ---
@@ -53,10 +58,17 @@ public class Entity extends Collidable {
 
     public int maxLife = 4;
     public int life = 4;
-    int showHPBarCounter = 0;
     public boolean attacking;
-    public int invincibleCounter = 0;
-    int dyingCounter = 0;
+    public int level;
+    public int strength;
+    public int dexterity;
+    public int attack;
+    public int defense;
+    public int exp;
+    public int nextLevelExp;
+    public int coins;
+    public GameObject currentWeapon;
+    public GameObject currentShield;
 
     // --- END OF CHARACTER STATUS ---
 
@@ -285,13 +297,21 @@ public class Entity extends Collidable {
 
     }
 
-    public void takeHit() {
+    public void takeHit(int attackDamage) {
         if (isInvincible()) {
             return;
         }
+
+        gp.ui.addMessage(attackDamage + " damage!");
         gp.playSoundEffect(7);
-        life--;
-        if (isAlive()) resetInvincibleCounter();
+
+        int damageTaken = Math.max(attackDamage - defense, 0);
+        life = Math.max(life - damageTaken, 0);
+
+
+        if (isDying()) gp.entityKilled(this);
+
+        resetInvincibleCounter();
         resetHPBarCounter();
     }
 
