@@ -45,7 +45,7 @@ public class GamePanel extends JPanel implements Runnable {
     public TileManager tileManager = new TileManager(this);
     public CollisionDetector collisionDetector = new CollisionDetector(this);
     public AssetSetter assetSetter = new AssetSetter(this);
-    Sound music = new Sound();
+    public Sound music = new Sound();
     public Sound soundEffect = new Sound();
     public UserInterface ui = new UserInterface(this);
     public EventHandler eventHandler = new EventHandler(this);
@@ -121,6 +121,18 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    public void goUpOneOptionInTitleScreen() {
+        ui.goUpOneOptionInTitleScreen();
+    }
+
+    public void goDownOneOptionInTitleScreen() {
+        ui.goDownOneOptionInTitleScreen();
+    }
+
+    public void enterPressedInTitleScreen() {
+        ui.enterPressedInTitleScreen();
+    }
+
     public void update() {
         gameState.updatePanel(this);
     }
@@ -193,35 +205,12 @@ public class GamePanel extends JPanel implements Runnable {
         return collidablesToRender;
     }
 
-    public int getScreenY(int worldY) {
-        return worldY - player.worldY + player.screenY;
-    }
-
-    public int getScreenX(int worldX) {
-        return worldX - player.worldX + player.screenX;
-    }
-
-    public boolean isCollideable(int tileType) {
-        return tileManager.isCollideable(tileType);
-    }
-
-    public void playMusic(int i) {
-        music.setFile(i);
-        music.play();
-        music.loop();
-    }
-
-    public void stopMusic() {
-        music.stop();
-    }
-
-    public void playSoundEffect(int i) {
-        soundEffect.setFile(i);
-        soundEffect.play();
-    }
-
     public void updateInterface() {
         gameState.updateInterface(ui);
+    }
+
+    public void updateKeyHandlerState() {
+        gameState.updateKeyHandler(keyH);
     }
 
     public void updateTileCollisionsFor(Entity entity) {
@@ -249,28 +238,8 @@ public class GamePanel extends JPanel implements Runnable {
         ui.updateDialogue(npcs.get(npcIndex).speak());
     }
 
-    public void updateKeyHandlerState() {
-        gameState.updateKeyHandler(keyH);
-    }
-
-    public void pauseGame() {
-        gameState = new PauseGameState();
-    }
-
-    public void resumeGame() {
-        gameState = new PlayGameState();
-    }
-
-    public void goUpOneOptionInTitleScreen() {
-        ui.goUpOneOptionInTitleScreen();
-    }
-
-    public void goDownOneOptionInTitleScreen() {
-        ui.goDownOneOptionInTitleScreen();
-    }
-
-    public void enterPressedInTitleScreen() {
-        ui.enterPressedInTitleScreen();
+    public void playerInteractedWithMonster(int monsterIndex) {
+        monsters.get(monsterIndex).collidedWithPlayer();
     }
 
     public void actionKeyWasPressed() {
@@ -285,15 +254,6 @@ public class GamePanel extends JPanel implements Runnable {
         entity.takeHit(attackDamage);
     }
 
-    public void openInventory() {
-        gameState = new CharacterGameState();
-    }
-
-    public void playerInteractedWithMonster(int monsterIndex) {
-        monsters.get(monsterIndex).collidedWithPlayer();
-    }
-
-
     public void entityKilled(Entity entity) {
         ui.addMessage("You killed: " + entity.name + "!");
         ui.addMessage("Gained " + entity.exp + "EXP");
@@ -304,6 +264,46 @@ public class GamePanel extends JPanel implements Runnable {
         ui.currentDialogue = "You reached level " + level + "!\nYou feel stronger...";
         gameState = new DialogueGameState();
     }
+
+    public void playMusic(int i) {
+        music.setFile(i);
+        music.play();
+        music.loop();
+    }
+
+    public void stopMusic() {
+        music.stop();
+    }
+
+    public void playSoundEffect(int i) {
+        soundEffect.setFile(i);
+        soundEffect.play();
+    }
+
+    public void pauseGame() {
+        gameState = new PauseGameState();
+    }
+
+    public void resumeGame() {
+        gameState = new PlayGameState();
+    }
+
+    public void openInventory() {
+        gameState = new CharacterGameState();
+    }
+
+    public int getScreenY(int worldY) {
+        return worldY - player.worldY + player.screenY;
+    }
+
+    public int getScreenX(int worldX) {
+        return worldX - player.worldX + player.screenX;
+    }
+
+    public boolean isCollideable(int tileType) {
+        return tileManager.isCollideable(tileType);
+    }
+
 }
 
 
