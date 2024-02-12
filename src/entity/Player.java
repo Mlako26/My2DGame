@@ -4,8 +4,8 @@ import main.GamePanel;
 import main.KeyHandler;
 import object.GameObject;
 import object.OBJ_Key;
-import object.OBJ_Shield_Wood;
-import object.OBJ_Sword_Normal;
+import object.OBJ_Shield_Wooden;
+import object.OBJ_Sword_Iron;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -51,8 +51,8 @@ public class Player extends Entity {
         exp = 0;
         nextLevelExp = 5;
         coins = 0;
-        currentWeapon = new OBJ_Sword_Normal(gp,0,0,false);
-        currentShield = new OBJ_Shield_Wood(gp,0,0,false);
+        currentWeapon = new OBJ_Sword_Iron(gp,0,0,false);
+        currentShield = new OBJ_Shield_Wooden(gp,0,0,false);
         attack = getAttack();
         defense = getDefense();
     }

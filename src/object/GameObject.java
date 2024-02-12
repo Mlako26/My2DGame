@@ -22,16 +22,20 @@ public class GameObject extends Collidable {
 
     // --- END OF ITEM ATTRIBUTES ---
 
-    public GameObject(GamePanel gp, int x, int y, String name, boolean collision) {
+    public GameObject(GamePanel gp, int x, int y, String imageName, String name, boolean collision) {
         super(gp, x, y, collision);
 
         this.name = name;
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/" + name + ".png")));
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/" + imageName + ".png")));
             image = utilities.scaleImage(image, gp.tileSize, gp.tileSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setDescription(String description) {
+        this.description = "[" + name + "]\n" + description;
     }
 
     public void draw(Graphics2D g2) {

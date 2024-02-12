@@ -12,9 +12,8 @@ public class OBJ_Heart extends GameObject {
     public BufferedImage image2, image3;
 
     public OBJ_Heart(GamePanel gp, int x, int y) {
-        super(gp, x, y, "heart_full", true);
+        super(gp, x, y, "heart_full", "Heart", true);
 
-        this.name = "heart";
         try {
             image2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/heart_half.png")));
             image2 = utilities.scaleImage(image2, gp.tileSize, gp.tileSize);
