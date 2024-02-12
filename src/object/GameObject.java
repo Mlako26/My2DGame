@@ -12,13 +12,13 @@ import java.util.Objects;
 
 public class GameObject extends Collidable {
     public BufferedImage image;
-    public int worldX, worldY;
     public UtilityTool utilities = new UtilityTool();
 
     // --- ITEM ATTRIBUTES ---
 
     public int attackValue = 0;
     public int defenseValue = 0;
+    public String description = "";
 
     // --- END OF ITEM ATTRIBUTES ---
 

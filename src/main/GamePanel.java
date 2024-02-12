@@ -35,6 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
+    public String currentMap = "world0";
 
     // --- END OF WORLD SETTINGS  ---
 
@@ -42,7 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     Thread gameThread;
     public KeyHandler keyH = new KeyHandler(this);
-    public TileManager tileManager = new TileManager(this);
+    public TileManager tileManager = new TileManager(this, currentMap);
     public CollisionDetector collisionDetector = new CollisionDetector(this);
     public AssetSetter assetSetter = new AssetSetter(this);
     public Sound music = new Sound();
@@ -76,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
-        objects = assetSetter.setObjects();
+        objects = assetSetter.setObjects(currentMap);
         npcs = assetSetter.setNPC();
         monsters = assetSetter.setMonsters();
     }
@@ -170,7 +171,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (keyH.debugMode) {
             g2.setColor(Color.white);
             g2.drawString("Draw time: " + (drawEnd - drawStart) / 1e6,10, 400);
-            g2.drawString("X: " + player.worldX / tileSize + ", Y: " + player.worldY / tileSize, tileSize / 2, tileSize * 3);
+            g2.drawString("X: " + (player.worldX + player.solidArea.x) / tileSize + ", Y: " + (player.worldY + player.solidArea.y) / tileSize, tileSize / 2, tileSize * 3);
             System.out.println("Draw time: " + (drawEnd - drawStart));
         }
 

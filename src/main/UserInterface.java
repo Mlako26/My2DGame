@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class UserInterface {
 
@@ -22,6 +21,8 @@ public class UserInterface {
     TitleScreenDrawer titleScreenDrawer;
 
     BufferedImage heartFull, heartHalf, heartEmpty;
+
+    public int slotCol = 0, slotRow = 0;
 
     public UserInterface(GamePanel gp) {
         this.gp = gp;
@@ -71,6 +72,11 @@ public class UserInterface {
     }
 
     public void drawCharacterScreen() {
+        drawCharacterStats();
+        drawInventory();
+    }
+
+    private void drawCharacterStats() {
         final int frameX = gp.tileSize;
         final int frameY = gp.tileSize;
         final int frameWidth = gp.tileSize * 5;
@@ -86,24 +92,34 @@ public class UserInterface {
         final int lineHeight = 35;
 
         g2.drawString("Level", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Life", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Strength", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Dexterity", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Attack", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Defense", textX, textY);
+
         textY += lineHeight;
         g2.drawString("EXP", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Next Level", textX, textY);
+
         textY += lineHeight;
         g2.drawString("Coins", textX, textY);
+
         textY += lineHeight + 20;
         g2.drawString("Weapon", textX, textY);
+
         textY += lineHeight + 25;
         g2.drawString("Shield", textX, textY);
 
@@ -115,7 +131,7 @@ public class UserInterface {
         g2.drawString(value, textX, textY);
 
         textY += lineHeight;
-        value = String.valueOf(gp.player.life + "/" + gp.player.maxLife);
+        value = gp.player.life + "/" + gp.player.maxLife;
         textX = getXForAligningText(value, tailX);
         g2.drawString(value, textX, textY);
 
@@ -159,6 +175,64 @@ public class UserInterface {
 
         textY += gp.tileSize;
         g2.drawImage(gp.player.currentShield.image, tailX - gp.tileSize, textY, null);
+    }
+
+    public void drawInventory() {
+        // Frame
+        int frameX = gp.tileSize * 9;
+        int frameY = gp.tileSize;
+        int frameWidth = gp.tileSize * 6;
+        int frameHeight = gp.tileSize * 5;
+
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        // Slots
+        final int slotXStart = frameX + 20;
+        final int slotYStart = frameY + 20;
+        int slotX = slotXStart;
+        int slotY = slotYStart;
+        int slotSize = gp.tileSize + 3;
+
+        // Draw Items
+        for (int i = 0; i < gp.player.inventory.size(); i++) {
+            g2.drawImage(gp.player.inventory.get(i).image, slotX, slotY, null);
+            if (i % 5 == 4) {
+                slotX = slotXStart;
+                slotY += slotSize;
+            } else slotX += slotSize;
+        }
+
+        // Cursor
+        int cursorX = slotXStart + slotSize * slotCol;
+        int cursorY = slotYStart + slotSize * slotRow;
+        int cursorWidth = gp.tileSize;
+        int cursorHeight = gp.tileSize;
+
+        g2.setColor(Color.white);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
+
+        // Descriptions
+        int descriptionFrameX = frameX;
+        int descriptionFrameY = frameY + frameHeight + gp.tileSize;
+        int descriptionFrameWidth = frameWidth;
+        int descriptionFrameHeight = gp.tileSize * 3;
+
+        drawSubWindow(descriptionFrameX, descriptionFrameY, descriptionFrameWidth, descriptionFrameHeight);
+
+        int textX = descriptionFrameX + 20;
+        int textY = descriptionFrameY + gp.tileSize;
+        g2.setFont(g2.getFont().deriveFont(28F));
+
+        int itemIndex = slotRow * 5 + slotCol;
+        if (gp.player.inventory.size() > itemIndex) {
+            String itemDescription = gp.player.inventory.get(itemIndex).description;
+            String[] descriptionLines = itemDescription.split("\n");
+            for (String line : descriptionLines) {
+                g2.drawString(line, textX, textY);
+                textY += 32;
+            }
+        }
     }
 
     public void drawDialogueScreen() {

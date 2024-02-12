@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Entity extends Collidable {
+    public int startingX, startingY;
+
     // --- MOVEMENT ---
 
     public int speed;
@@ -74,6 +76,9 @@ public class Entity extends Collidable {
 
     public Entity(GamePanel gp, int worldX, int worldY) {
         super(gp, worldX, worldY, true);
+        startingX = worldX * gp.tileSize;
+        startingY = worldY * gp.tileSize;
+
         setDefaultValues();
         getEntityImages();
     }
@@ -249,11 +254,11 @@ public class Entity extends Collidable {
         Random random = new Random();
         int i = random.nextInt(100) + 1;
 
-        if (i <= 25) {
+        if (i <= 25 || worldY >= startingY + 5 * gp.tileSize) {
             direction = "up";
-        } else if (i <= 50) {
+        } else if (i <= 50 || worldY <= startingY - 5 * gp.tileSize) {
             direction = "down";
-        } else if (i <= 75) {
+        } else if (i <= 75 || worldX >= startingX + 5 * gp.tileSize) {
             direction = "left";
         } else {
             direction = "right";

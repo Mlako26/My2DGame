@@ -83,10 +83,13 @@ public class KeyHandler implements KeyListener {
             gp.openInventory();
         }
 
-
         // DEBUG
         if (code == KeyEvent.VK_T) {
             debugMode = !debugMode;
+        }
+
+        if (code == KeyEvent.VK_R) {
+            gp.tileManager.loadMap("/maps/world0.txt");
         }
     }
 
@@ -113,6 +116,18 @@ public class KeyHandler implements KeyListener {
     public void keyPressedOnCharacterState() {
         if (code == KeyEvent.VK_I) {
             gp.resumeGame();
+        } else if (code == KeyEvent.VK_W) {
+            gp.playSoundEffect(11);
+            gp.ui.slotRow = Math.max(gp.ui.slotRow - 1, 0);
+        } else if (code == KeyEvent.VK_S) {
+            gp.playSoundEffect(11);
+            gp.ui.slotRow = Math.min(gp.ui.slotRow + 1, 3);
+        } else if (code == KeyEvent.VK_A) {
+            gp.playSoundEffect(11);
+            gp.ui.slotCol = Math.max(gp.ui.slotCol - 1, 0);
+        } else if (code == KeyEvent.VK_D) {
+            gp.playSoundEffect(11);
+            gp.ui.slotCol = Math.min(gp.ui.slotCol + 1, 4);
         }
     }
 }

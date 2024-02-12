@@ -18,13 +18,13 @@ public class TileManager {
     final int TILE_COLLISION_INDEX = 0;
     final int TILE_ID_INDEX = 1;
 
-    public TileManager(GamePanel gp) {
+    public TileManager(GamePanel gp, String map) {
         this.gp = gp;
         tiles = new HashMap<>();
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         getTiles();
-        loadMap("world0");
+        loadMap(map);
     }
 
     public void getTiles() {
