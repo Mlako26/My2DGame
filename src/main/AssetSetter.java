@@ -3,10 +3,7 @@ package main;
 import entity.Entity;
 import entity.NPC_Explorer;
 import monster.MON_GreenSlime;
-import object.GameObject;
-import object.OBJ_BlueFlower;
-import object.OBJ_Chest;
-import object.OBJ_PinkFlower;
+import object.*;
 
 import java.util.ArrayList;
 
@@ -36,14 +33,21 @@ public class AssetSetter {
 //            System.out.println("Error: " + e.getMessage());
 //        }
 
-        objects.add(new OBJ_PinkFlower(gp, 37, 16));
-        objects.add(new OBJ_PinkFlower(gp, 40, 16));
-        objects.add(new OBJ_PinkFlower(gp, 39, 18));
-        objects.add(new OBJ_BlueFlower(gp, 41, 15));
-        objects.add(new OBJ_BlueFlower(gp, 40, 18));
-        objects.add(new OBJ_BlueFlower(gp, 35, 18));
-        objects.add(new OBJ_BlueFlower(gp, 35, 18));
-        objects.add(new OBJ_Chest(gp, 10, 41));
+//        objects.add(new OBJ_PinkFlower(gp, 37, 16));
+//        objects.add(new OBJ_PinkFlower(gp, 40, 16));
+//        objects.add(new OBJ_PinkFlower(gp, 39, 18));
+//        objects.add(new OBJ_BlueFlower(gp, 41, 15));
+//        objects.add(new OBJ_BlueFlower(gp, 40, 18));
+//        objects.add(new OBJ_BlueFlower(gp, 35, 18));
+//        objects.add(new OBJ_BlueFlower(gp, 35, 18));
+//        objects.add(new OBJ_Chest(gp, 10, 41));
+        objects.add(new OBJ_Key(gp, 13, 20));
+        objects.add(new OBJ_Key(gp, 25, 6));
+        objects.add(new OBJ_Key(gp, 41, 18));
+        objects.add(new OBJ_Axe_Iron(gp, 33, 37));
+        objects.add(new OBJ_Shield_Iron(gp, 33, 38));
+        objects.add(new OBJ_Potion_Red(gp, 33, 39));
+        objects.add(new OBJ_Potion_Red(gp, 33, 40));
 
 
         return objects;

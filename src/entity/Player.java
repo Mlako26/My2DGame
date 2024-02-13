@@ -24,7 +24,6 @@ public class Player extends Entity {
     public ArrayList<GameObject> inventory = new ArrayList<>();
     public int maxInventorySize = 20;
 
-
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp, startingCol, startingRow);
         this.keyH = keyH;
@@ -42,17 +41,14 @@ public class Player extends Entity {
         maxLife = 6;
         life = maxLife;
 
-        attackArea.width = 36;
-        attackArea.height = 36;
-
         level = 1;
         strength = 1;
         dexterity = 1;
         exp = 0;
         nextLevelExp = 5;
         coins = 0;
-        currentWeapon = new OBJ_Sword_Iron(gp,0,0,false);
-        currentShield = new OBJ_Shield_Wooden(gp,0,0,false);
+        currentWeapon = new OBJ_Sword_Iron(gp,0,0);
+        currentShield = new OBJ_Shield_Wooden(gp,0,0);
         attack = getAttack();
         defense = getDefense();
     }
@@ -181,13 +177,13 @@ public class Player extends Entity {
 
         // Change players hit-box to match the weapon's
         switch(direction) {
-            case "up": worldY -= attackArea.height; break;
-            case "down": worldY += attackArea.height; break;
-            case "left": worldX -= attackArea.width; break;
-            case "right": worldX += attackArea.width; break;
+            case "up": worldY -= currentWeapon.attackArea.height; break;
+            case "down": worldY += currentWeapon.attackArea.height; break;
+            case "left": worldX -= currentWeapon.attackArea.width; break;
+            case "right": worldX += currentWeapon.attackArea.width; break;
         }
-        solidArea.width = attackArea.width;
-        solidArea.height = attackArea.height;
+        solidArea.width = currentWeapon.attackArea.width;
+        solidArea.height = currentWeapon.attackArea.height;
 
         int monsterIndex = gp.updateMonsterCollisionsFor(this);
 
@@ -218,8 +214,20 @@ public class Player extends Entity {
         interactWithMonster(monsterIndex);
     }
 
-    public void pickUpObject(int i) {
-        if (i == -1) return;
+    public void pickUpObject(int objectIndex) {
+        if (objectIndex == -1) return;
+        String text = "";
+
+        if (inventory.size() < maxInventorySize) {
+            GameObject pickedUpObject = gp.pickUpObject(objectIndex);
+            inventory.add(pickedUpObject);
+            gp.playSoundEffect(1);
+            text = "Got a " + pickedUpObject.name + "!";
+        } else {
+            text = "Your inventory is full!";
+        }
+
+        gp.ui.addMessage(text);
     }
 
     public void interactWithNPC(int npcIndex) {
@@ -266,6 +274,27 @@ public class Player extends Entity {
             defense = getDefense();
 
             gp.playerLeveledUp(level);
+        }
+    }
+
+    public void selectItem() {
+        int itemIndex = gp.ui.getItemIndex();
+
+        if (itemIndex < inventory.size()) {
+            GameObject selectedItem = inventory.get(itemIndex);
+            if (selectedItem.type == selectedItem.typeWeapon ||
+                    selectedItem.type == selectedItem.typeAxe) {
+                currentWeapon = selectedItem;
+                attack = getAttack();
+            }
+            if (selectedItem.type == selectedItem.typeShield) {
+                currentShield = selectedItem;
+                defense = getDefense();
+            }
+            if (selectedItem.type == selectedItem.typeConsumable) {
+                boolean used = selectedItem.use(this);
+                if (used) inventory.remove(itemIndex);
+            }
         }
     }
 }

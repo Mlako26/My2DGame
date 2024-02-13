@@ -64,7 +64,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // --- GAME STATE ---
 
-    GameState gameState = new TitleGameState();
+    public GameState gameState = new TitleGameState();
 
     // --- END OF GAME STATE ---
 
@@ -282,10 +282,12 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void pauseGame() {
+        stopMusic();
         gameState = new PauseGameState();
     }
 
     public void resumeGame() {
+        if (gameState instanceof PauseGameState) playMusic(0);
         gameState = new PlayGameState();
     }
 
@@ -305,6 +307,11 @@ public class GamePanel extends JPanel implements Runnable {
         return tileManager.isCollideable(tileType);
     }
 
+    public GameObject pickUpObject(int objectIndex) {
+        GameObject pickedUpObject = objects.get(objectIndex);
+        objects.remove(objectIndex);
+        return pickedUpObject;
+    }
 }
 
 

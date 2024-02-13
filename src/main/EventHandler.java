@@ -42,10 +42,6 @@ public class EventHandler {
             eventRectangle[lastEventCol][lastEventRow].eventDone = false;
         }
 
-        if (hit(25,29, "right")) {
-            damagePit(25, 29, new DialogueGameState());
-        }
-
         if (hit(23,42,"left")) {
             healingPool(23, 42, new DialogueGameState());
         }

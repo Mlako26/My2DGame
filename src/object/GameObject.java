@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import entity.Entity;
 
 public class GameObject extends Collidable {
     public BufferedImage image;
@@ -19,6 +20,12 @@ public class GameObject extends Collidable {
     public int attackValue = 0;
     public int defenseValue = 0;
     public String description = "";
+    public Rectangle attackArea = new Rectangle(0,0,0,0);
+    public int type = 0;
+    public final int typeWeapon = 1;
+    public final int typeShield = 2;
+    public final int typeAxe = 3;
+    public final int typeConsumable = 4;
 
     // --- END OF ITEM ATTRIBUTES ---
 
@@ -46,4 +53,6 @@ public class GameObject extends Collidable {
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
     }
+
+    public boolean use(Entity entity) {return false;}
 }

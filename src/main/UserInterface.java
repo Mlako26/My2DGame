@@ -195,6 +195,12 @@ public class UserInterface {
 
         // Draw Items
         for (int i = 0; i < gp.player.inventory.size(); i++) {
+            if (gp.player.inventory.get(i) == gp.player.currentWeapon ||
+                gp.player.inventory.get(i) == gp.player.currentShield) {
+                g2.setColor(new Color(240,190,90));
+                g2.fillRoundRect(slotX, slotY, gp.tileSize, gp.tileSize, 10, 10);
+            }
+
             g2.drawImage(gp.player.inventory.get(i).image, slotX, slotY, null);
             if (i % 5 == 4) {
                 slotX = slotXStart;
@@ -213,19 +219,17 @@ public class UserInterface {
         g2.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
 
         // Descriptions
-        int descriptionFrameX = frameX;
-        int descriptionFrameY = frameY + frameHeight + gp.tileSize;
-        int descriptionFrameWidth = frameWidth;
-        int descriptionFrameHeight = gp.tileSize * 3;
-
-        drawSubWindow(descriptionFrameX, descriptionFrameY, descriptionFrameWidth, descriptionFrameHeight);
-
-        int textX = descriptionFrameX + 20;
-        int textY = descriptionFrameY + gp.tileSize;
-        g2.setFont(g2.getFont().deriveFont(28F));
-
-        int itemIndex = slotRow * 5 + slotCol;
+        int itemIndex = getItemIndex();
         if (gp.player.inventory.size() > itemIndex) {
+            int descriptionFrameY = frameY + frameHeight;
+            int descriptionFrameHeight = gp.tileSize * 3;
+
+            drawSubWindow(frameX, descriptionFrameY, frameWidth, descriptionFrameHeight);
+
+            int textX = frameX + 20;
+            int textY = descriptionFrameY + gp.tileSize;
+            g2.setFont(g2.getFont().deriveFont(28F));
+
             String itemDescription = gp.player.inventory.get(itemIndex).description;
             String[] descriptionLines = itemDescription.split("\n");
             for (String line : descriptionLines) {
@@ -233,6 +237,10 @@ public class UserInterface {
                 textY += 32;
             }
         }
+    }
+
+    public int getItemIndex() {
+        return slotRow * 5 + slotCol;
     }
 
     public void drawDialogueScreen() {

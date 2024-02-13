@@ -45,8 +45,6 @@ public class Entity extends Collidable {
     public boolean leftCollisionOn = false;
     public boolean rightCollisionOn = false;
 
-    public Rectangle attackArea = new Rectangle(0,0,0,0);
-
     // --- END OF COLLISION ---
 
     // --- DIALOGUES ---

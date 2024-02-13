@@ -114,7 +114,7 @@ public class KeyHandler implements KeyListener {
     }
 
     public void keyPressedOnCharacterState() {
-        if (code == KeyEvent.VK_I) {
+        if (code == KeyEvent.VK_I || code == KeyEvent.VK_ESCAPE) {
             gp.resumeGame();
         } else if (code == KeyEvent.VK_W) {
             gp.playSoundEffect(11);
@@ -128,6 +128,8 @@ public class KeyHandler implements KeyListener {
         } else if (code == KeyEvent.VK_D) {
             gp.playSoundEffect(11);
             gp.ui.slotCol = Math.min(gp.ui.slotCol + 1, 4);
+        } else if (code == KeyEvent.VK_ENTER) {
+            gp.player.selectItem();
         }
     }
 }
