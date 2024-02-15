@@ -2,7 +2,7 @@ package object;
 
 import main.GamePanel;
 
-public class OBJ_Shield_Iron extends GameObject {
+public class OBJ_Shield_Iron extends Shield {
     public OBJ_Shield_Iron(GamePanel gp, int x, int y) {
         super(gp, x, y, "shieldIron", "Iron Shield", false);
         defenseValue = 2;

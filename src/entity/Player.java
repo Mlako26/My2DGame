@@ -2,10 +2,7 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
-import object.GameObject;
-import object.OBJ_Key;
-import object.OBJ_Shield_Wooden;
-import object.OBJ_Sword_Iron;
+import object.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -32,7 +29,7 @@ public class Player extends Entity {
         screenY = gp.screenHeight/2 - gp.tileSize / 2;
 
         setInitialInventory();
-        getPlayerAttackImages();
+        getSwordAttackImages();
     }
 
     public void setDefaultValues() {
@@ -79,15 +76,26 @@ public class Player extends Entity {
         right2 = setup("/player/right2", gp.tileSize, gp.tileSize);
     }
 
-    public void getPlayerAttackImages() {
-        attackUp1 = setup("/player/attack/player_attack_up1", gp.tileSize, gp.tileSize * 2);
-        attackUp2 = setup("/player/attack/player_attack_up2", gp.tileSize, gp.tileSize * 2);
-        attackDown1 = setup("/player/attack/player_attack_down1", gp.tileSize, gp.tileSize * 2);
-        attackDown2 = setup("/player/attack/player_attack_down2", gp.tileSize, gp.tileSize * 2);
-        attackLeft1 = setup("/player/attack/player_attack_left1", gp.tileSize * 2, gp.tileSize);
-        attackLeft2 = setup("/player/attack/player_attack_left2", gp.tileSize * 2, gp.tileSize);
-        attackRight1 = setup("/player/attack/player_attack_right1", gp.tileSize * 2, gp.tileSize);
-        attackRight2 = setup("/player/attack/player_attack_right2", gp.tileSize * 2, gp.tileSize);
+    public void getSwordAttackImages() {
+        attackUp1 = setup("/player/attack/player_ironSword_up1", gp.tileSize, gp.tileSize * 2);
+        attackUp2 = setup("/player/attack/player_ironSword_up2", gp.tileSize, gp.tileSize * 2);
+        attackDown1 = setup("/player/attack/player_ironSword_down1", gp.tileSize, gp.tileSize * 2);
+        attackDown2 = setup("/player/attack/player_ironSword_down2", gp.tileSize, gp.tileSize * 2);
+        attackLeft1 = setup("/player/attack/player_ironSword_left1", gp.tileSize * 2, gp.tileSize);
+        attackLeft2 = setup("/player/attack/player_ironSword_left2", gp.tileSize * 2, gp.tileSize);
+        attackRight1 = setup("/player/attack/player_ironSword_right1", gp.tileSize * 2, gp.tileSize);
+        attackRight2 = setup("/player/attack/player_ironSword_right2", gp.tileSize * 2, gp.tileSize);
+    }
+
+    public void getAxeAttackImages() {
+        attackUp1 = setup("/player/attack/player_ironAxe_up1", gp.tileSize, gp.tileSize * 2);
+        attackUp2 = setup("/player/attack/player_ironAxe_up2", gp.tileSize, gp.tileSize * 2);
+        attackDown1 = setup("/player/attack/player_ironAxe_down1", gp.tileSize, gp.tileSize * 2);
+        attackDown2 = setup("/player/attack/player_ironAxe_down2", gp.tileSize, gp.tileSize * 2);
+        attackLeft1 = setup("/player/attack/player_ironAxe_left1", gp.tileSize * 2, gp.tileSize);
+        attackLeft2 = setup("/player/attack/player_ironAxe_left2", gp.tileSize * 2, gp.tileSize);
+        attackRight1 = setup("/player/attack/player_ironAxe_right1", gp.tileSize * 2, gp.tileSize);
+        attackRight2 = setup("/player/attack/player_ironAxe_right2", gp.tileSize * 2, gp.tileSize);
     }
 
     public void draw(Graphics2D g2) {
@@ -268,6 +276,8 @@ public class Player extends Entity {
             nextLevelExp = nextLevelExp * 2 + 10;
 
             maxLife += 2;
+            life += 2;
+
             strength++;
             dexterity++;
             attack = getAttack();
@@ -282,19 +292,23 @@ public class Player extends Entity {
 
         if (itemIndex < inventory.size()) {
             GameObject selectedItem = inventory.get(itemIndex);
-            if (selectedItem.type == selectedItem.typeWeapon ||
-                    selectedItem.type == selectedItem.typeAxe) {
-                currentWeapon = selectedItem;
-                attack = getAttack();
-            }
-            if (selectedItem.type == selectedItem.typeShield) {
-                currentShield = selectedItem;
-                defense = getDefense();
-            }
-            if (selectedItem.type == selectedItem.typeConsumable) {
-                boolean used = selectedItem.use(this);
-                if (used) inventory.remove(itemIndex);
-            }
+            selectedItem.interact(this);
         }
+    }
+
+    public void interactWithWeapon(Weapon weapon) {
+        currentWeapon = weapon;
+        weapon.getPlayerAttackImages(this);
+        attack = getAttack();
+    }
+
+    public void interactWithConsumable(Consumable consumable) {
+        boolean used = consumable.use(this);
+        if (used) inventory.remove(consumable);
+    }
+
+    public void interactWithShield(Shield shield) {
+        currentShield = shield;
+        defense = getDefense();
     }
 }

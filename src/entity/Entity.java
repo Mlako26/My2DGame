@@ -3,7 +3,9 @@ package entity;
 import collidable.Collidable;
 import main.GamePanel;
 import main.UtilityTool;
+import object.Consumable;
 import object.GameObject;
+import object.Weapon;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -337,4 +339,5 @@ public class Entity extends Collidable {
     public boolean isAlive() {
         return !isDead();
     }
+
 }

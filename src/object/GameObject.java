@@ -1,6 +1,7 @@
 package object;
 
 import collidable.Collidable;
+import entity.Player;
 import main.GamePanel;
 import main.UtilityTool;
 
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.util.Objects;
 import entity.Entity;
 
-public class GameObject extends Collidable {
+public abstract class GameObject extends Collidable {
     public BufferedImage image;
     public UtilityTool utilities = new UtilityTool();
 
@@ -54,5 +55,5 @@ public class GameObject extends Collidable {
         }
     }
 
-    public boolean use(Entity entity) {return false;}
+    public void interact(Player player) {};
 }

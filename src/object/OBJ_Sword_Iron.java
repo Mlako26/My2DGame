@@ -2,7 +2,7 @@ package object;
 
 import main.GamePanel;
 
-public class OBJ_Sword_Iron extends GameObject {
+public class OBJ_Sword_Iron extends Weapon {
 
     public OBJ_Sword_Iron(GamePanel gp, int x, int y) {
         super(gp, x, y, "swordNormal", "Iron Sword", false);

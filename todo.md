@@ -8,6 +8,9 @@
 - [X] Make castle a bit longer.
 - [X] Add object collision and interaction.
 - [x] fix npc shirt
+- [x] Refactor Game Panel methods.
 
 - [] If needed, I can optimize rendering time by not sorting collidables each time, but doing a merging algorithm.
-- [] Refactor Game Panel methods.
+- [] Add attack images for axe.
+- [] Add image for health potion.
+- [] Refactor GameObject subclasses.
